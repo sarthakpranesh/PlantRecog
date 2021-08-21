@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
+import fetch from 'node-fetch';
+
+// importing services
+import { isServiceAvailable, getFlowerImagePrediction } from './services/plantRecog';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -8,11 +12,16 @@ let camera: Camera;
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
-  const [type, setType] = useState(Camera.Constants.Type.back);
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      const [isPlantServiceUp, { status }] = await Promise.all([
+        isServiceAvailable(),
+        Camera.requestPermissionsAsync()
+      ])
+      if (!isPlantServiceUp) {
+        Alert.alert('Service Down', 'The service is currently unavailable, please check later');
+      }
       setHasPermission(status === 'granted');
     })();
   }, []);
@@ -30,13 +39,33 @@ export default function App() {
       return;
     }
 
-    const photo = await camera.takePictureAsync();
-    console.log(photo);
+    const photo = await camera.takePictureAsync({
+      quality: 0,
+    });
+
+    try {
+      const prediction = getFlowerImagePrediction(photo.uri);
+      if (prediction !== null) {
+        return null;
+      } else {
+        return Alert.alert(
+          'Ops',
+          'Looks like something bad happened, please try again!',
+        )
+      }
+    } catch (err) {
+
+    }
   }
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={(r) => camera = r}>
+      <Camera
+        style={styles.camera}
+        type={Camera.Constants.Type.back}
+        ref={(r) => camera = r}
+        ratio='1:1'
+      >
         <TouchableOpacity style={styles.mainCameraButton} onPress={takePictureAsync} />
       </Camera>
     </View>

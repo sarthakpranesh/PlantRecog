@@ -16,7 +16,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { Camera as CameraIcon, Folder } from './components/Icons';
 
 // importing services
-import { isServiceAvailable, getFlowerImagePrediction } from './services/plantRecog';
+import {
+  isServiceAvailable,
+  getRecognizedClasses,
+  getFlowerImagePrediction
+} from './services/plantRecog';
 import { H1, H2, H3 } from './components/Typography';
 
 const {width, height} = Dimensions.get('screen');
@@ -28,6 +32,7 @@ export default function App() {
   const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
 
   const [title, setTitle] = useState<string>("PlantRecog");
+  const [recognized, setRecognized] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -46,6 +51,15 @@ export default function App() {
       setHasPermissionCamera(cameraPer.status === 'granted');
       setHasPermissionPicker(pickerPer.status === 'granted');
     })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const payload = await getRecognizedClasses();
+      if (payload.recognized) {
+        setRecognized(payload.recognized);
+      }
+    })()
   }, []);
 
   if (hasPermissionCamera === null) {
@@ -104,6 +118,7 @@ export default function App() {
 
     if (!result.cancelled) {
       try {
+        setTitle('Processing Image...');
         const prediction: any = await getFlowerImagePrediction(result.uri);
         if (prediction !== null) {
           setTitle(prediction.prediction.toUpperCase());
@@ -146,6 +161,7 @@ export default function App() {
         <H1 text={title} />
         <H2 text="Know plants with just a click" />
         <H3 text="How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. We currently support 5 flower category." />
+        <H3 text={`Recognized Classes: ${recognized}`} />
       </ScrollView>
     </View>
   );

@@ -11,10 +11,24 @@ export const isServiceAvailable = async () => {
         return true;
     } catch (err) {
         console.log('From service->plantRecog->isServiceAvailable error:', err.message);
-        return false;
+        return err;
     }
 }
 
+// get classes
+export const getRecognizedClasses = async () => {
+    try {
+        const rawResp = await fetch(baseUrl+'all');
+        const resp = await rawResp.json();
+        console.log('From service->plantRecog->getRecognizedClasses response:', resp);
+        return resp.payload;
+    } catch (err) {
+        console.log('From service->plantRecog->getRecognizedClasses error:', err.message);
+        return err;
+    }
+}
+
+// predict the image
 export const getFlowerImagePrediction = async (photoUri) => {
     try {
         // create the file object
@@ -43,5 +57,6 @@ export const getFlowerImagePrediction = async (photoUri) => {
         }
     } catch (err) {
         console.log('From service->photoRecog->getFlowerImagePrediction error:', err.message);
+        return err;
     }
 }

@@ -38,9 +38,6 @@ const { width } = Dimensions.get("screen");
 export default function App() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["48%", "100%"], []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
 
   const [appIsReady, setAppIsReady] = useState(false);
   const [hasPermissionCamera, setHasPermissionCamera] = useState(false);
@@ -123,12 +120,7 @@ export default function App() {
         hasPermissionPicker={hasPermissionPicker}
         recognizeImage={recognizeImage}
       />
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-      >
+      <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
         <BottomSheetScrollView
           contentContainerStyle={styles.scrollViewContainer}
         >
@@ -137,6 +129,9 @@ export default function App() {
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
               {allPredicted.map((d, i) => {
+                if (d.score === 0) {
+                  return null;
+                }
                 return (
                   <>
                     <H3 key={`${i}`} text={d.name + ": " + d.score} />
@@ -166,7 +161,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#F9F9F9",
     backgroundColor: "black",
     display: "flex",
     flexDirection: "column",
@@ -180,6 +174,8 @@ const styles = StyleSheet.create({
     alignContent: "flex-start",
     padding: 8,
     width,
+    backgroundColor: "#F9F9F9",
+    flex: 1,
   },
   plantImage: {
     width: "100%",
@@ -191,7 +187,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: `rgba(249, 249, 249, 0.8)`,
+    backgroundColor: "white",
     alignSelf: "center",
     display: "flex",
     flexDirection: "column",

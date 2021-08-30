@@ -8,14 +8,13 @@ import {
   StyleSheet,
   View,
   Dimensions,
-  TouchableOpacity,
   Alert,
   ScrollView,
   BackHandler,
 } from "react-native";
 
 // importing components
-import { Camera as CameraIcon, Folder } from "./components/Icons";
+import CusCamera from "./components/Camera";
 // importing services
 import { H1, H3 } from "./components/Typography";
 import {
@@ -25,8 +24,6 @@ import {
 } from "./services/plantRecog";
 
 const { width } = Dimensions.get("screen");
-
-let camera: Camera;
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -82,49 +79,6 @@ export default function App() {
     return null;
   }
 
-  const takePictureAsync = async () => {
-    if (!hasPermissionCamera) {
-      const { status } = await Camera.requestPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Oh! Snap", "App does not have permission for the Camera!");
-      } else {
-        setHasPermissionCamera(true);
-      }
-    }
-
-    const photo = await camera.takePictureAsync({
-      quality: 0,
-    });
-
-    recognizeImage(photo.uri);
-  };
-
-  const pickImage = async () => {
-    if (!hasPermissionPicker) {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Oh! Snap",
-          "Not having enough permission to open gallery!"
-        );
-      } else {
-        setHasPermissionPicker(true);
-      }
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0,
-    });
-
-    if (!result.cancelled) {
-      recognizeImage(result.uri);
-    }
-  };
-
   const recognizeImage = async (image: string) => {
     try {
       setPredicted({
@@ -149,22 +103,11 @@ export default function App() {
   return (
     <View style={styles.container} onLayout={onLayout}>
       <StatusBar hidden />
-      <Camera
-        style={styles.camera}
-        type={Camera.Constants.Type.back}
-        ref={(r) => (camera = r)}
-        ratio="1:1"
-      >
-        <TouchableOpacity
-          style={styles.mainCameraButton}
-          onPress={takePictureAsync}
-        >
-          <CameraIcon />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.mainGalleryButton} onPress={pickImage}>
-          <Folder />
-        </TouchableOpacity>
-      </Camera>
+      <CusCamera
+        hasPermissionCamera={hasPermissionCamera}
+        hasPermissionPicker={hasPermissionPicker}
+        recognizeImage={recognizeImage}
+      />
       <ScrollView
         contentContainerStyle={styles.scrollViewContainer}
         showsVerticalScrollIndicator={false}
@@ -190,53 +133,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-  },
-  camera: {
-    height: width,
-    width,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 20,
-  },
-  mainCameraButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
-    backgroundColor: `rgba(249, 249, 249, 0.8)`,
-    position: "absolute",
-    bottom: 10,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowOffset: {
-      width: 8,
-      height: 8,
-    },
-    shadowColor: "black",
-    shadowRadius: 8,
-  },
-  mainGalleryButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
-    backgroundColor: `rgba(249, 249, 249, 0.8)`,
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowOffset: {
-      width: 8,
-      height: 8,
-    },
-    shadowColor: "black",
-    shadowRadius: 8,
   },
   scrollViewContainer: {
     display: "flex",

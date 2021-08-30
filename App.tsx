@@ -11,7 +11,14 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { StyleSheet, View, Dimensions, Alert, BackHandler } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Alert,
+  BackHandler,
+  Image,
+} from "react-native";
 
 // importing components
 import CusCamera from "./components/Camera";
@@ -36,10 +43,7 @@ export default function App() {
   const [hasPermissionCamera, setHasPermissionCamera] = useState(false);
   const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
 
-  const [predicted, setPredicted] = useState({
-    name: "",
-    score: null,
-  });
+  const [image, setImage] = useState<string | null>(null);
   const [allPredicted, setAllPredicted] = useState([
     {
       name: "",
@@ -87,13 +91,15 @@ export default function App() {
 
   const recognizeImage = async (image: string) => {
     try {
-      setPredicted({
-        name: "Processing Image...",
-        score: null,
-      });
+      setAllPredicted([
+        {
+          name: "Processing",
+          score: 0,
+        },
+      ]);
+      setImage(image);
       const payload: any = await getFlowerImagePrediction(image);
       if (payload.predictions !== null) {
-        setPredicted(payload.predictions[0]);
         setAllPredicted(payload.predictions);
       } else {
         return Alert.alert(
@@ -121,18 +127,11 @@ export default function App() {
         onChange={handleSheetChanges}
       >
         <View style={styles.scrollViewContainer}>
-          {allPredicted[0].score === null ? (
+          {image === null ? null : (
             <>
-              <H3 text="Get Started" />
-              <Paragraph
-                style={{ marginBottom: 10 }}
-                text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it."
-              />
-            </>
-          ) : (
-            <>
-              <H1 text={predicted.name.toUpperCase()} />
-              {allPredicted.map((d) => {
+              <Image style={styles.plantImage} source={{ uri: image }} />
+              <H1 text={allPredicted[0].name} />
+              {allPredicted.slice(1, allPredicted.length).map((d) => {
                 return (
                   <>
                     <H3 key={d.name} text={d.name + ": " + d.score} />
@@ -141,9 +140,10 @@ export default function App() {
               })}
             </>
           )}
-          <H3 text="About" />
-          <H2 text="PlantRecog" />
-          <Paragraph text="Know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs." />
+          <H2 style={{ marginTop: 10 }} text="Get Started" />
+          <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
+          <H2 style={{ marginTop: 10 }} text="About" />
+          <Paragraph text="PlantRecog is an Open Source project. It allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github. Show your support by leaving a 🌟 on our Github Repo" />
         </View>
       </BottomSheet>
     </View>
@@ -167,5 +167,11 @@ const styles = StyleSheet.create({
     alignContent: "flex-start",
     padding: 8,
     width,
+  },
+  plantImage: {
+    width: "100%",
+    height: 200,
+    resizeMode: "cover",
+    borderRadius: 8,
   },
 });

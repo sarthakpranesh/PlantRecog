@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Text } from "react-native";
 
+import { HTextFormatter } from ".";
+
 export type H1Params = {
   text: string;
   style?: any;
@@ -18,7 +20,7 @@ const H1 = ({ text, style }: H1Params) => {
         style,
       ]}
     >
-      {text}
+      {HTextFormatter(text)}
     </Text>
   );
 };

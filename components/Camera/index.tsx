@@ -6,7 +6,7 @@ import { TouchableOpacity, StyleSheet, Dimensions, Alert } from "react-native";
 // importing components
 import { Camera as CameraIcon, Folder } from "../Icons";
 
-const { width } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("screen");
 let camera: ExpoCamera;
 
 export type CameraProps = {
@@ -29,7 +29,7 @@ const Camera = ({
     }
 
     const photo = await camera.takePictureAsync({
-      quality: 0,
+      quality: 1,
     });
 
     recognizeImage(photo.uri);
@@ -51,7 +51,7 @@ const Camera = ({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0,
+      quality: 1,
     });
 
     if (!result.cancelled) {
@@ -81,7 +81,7 @@ const Camera = ({
 
 const styles = StyleSheet.create({
   camera: {
-    height: width,
+    height: height / 2 + 50,
     width,
     display: "flex",
     flexDirection: "column",
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: `rgba(249, 249, 249, 0.8)`,
     position: "absolute",
-    bottom: 10,
+    bottom: 60,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: `rgba(249, 249, 249, 0.8)`,
     position: "absolute",
-    bottom: 10,
+    bottom: 60,
     right: 10,
     display: "flex",
     flexDirection: "column",

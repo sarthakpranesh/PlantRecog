@@ -1,3 +1,3 @@
 git add .
 git commit -m "tmp"
-git push heroku master
+git push heroku master -f

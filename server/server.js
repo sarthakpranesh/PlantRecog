@@ -111,18 +111,18 @@ app.listen(process.env.PORT || 8080, async () => {
   console.log("Server started!");
   console.log("Loading ML model");
   try {
-    const modelVers = fs.readdirSync("./models/");
+    const modelVers = fs.readdirSync("./tfjs-models/");
     console.log("ML models available:", modelVers);
     latestVer = modelVers[modelVers.length - 1];
     modelVers.forEach(async (ver) => {
       const model = await tf.loadLayersModel(
-        `file://models/${ver}/model.json`,
+        `file://tfjs-models/${ver}/model.json`,
         {
           strict: false,
         }
       );
       const classes = JSON.parse(
-        fs.readFileSync(`./models/${ver}/classes.json`)
+        fs.readFileSync(`./tfjs-models/${ver}/classes.json`)
       );
       models[ver] = {
         model,

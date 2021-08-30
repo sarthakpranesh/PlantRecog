@@ -1,19 +1,20 @@
 import * as React from "react";
 import { Text } from "react-native";
 
-export type H2Params = {
+export type ParagraphParams = {
   text: string;
   style?: any;
 };
 
-const H2 = ({ text, style }: H2Params) => {
+const Paragraph = ({ text, style }: ParagraphParams) => {
   return (
     <Text
       style={[
         {
-          fontSize: 18,
-          fontWeight: "bold",
+          fontSize: 12,
+          fontWeight: "800",
           color: "#373D3F",
+          textAlign: "justify",
         },
         style,
       ]}
@@ -23,4 +24,4 @@ const H2 = ({ text, style }: H2Params) => {
   );
 };
 
-export default H2;
+export default Paragraph;

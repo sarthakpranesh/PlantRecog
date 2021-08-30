@@ -1,22 +1,22 @@
 import "react-native-gesture-handler";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  Alert,
-  ScrollView,
-  BackHandler,
-} from "react-native";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
+import { StyleSheet, View, Dimensions, Alert, BackHandler } from "react-native";
 
 // importing components
 import CusCamera from "./components/Camera";
 // importing services
-import { H1, H3 } from "./components/Typography";
+import { H1, H2, H3, Paragraph } from "./components/Typography";
 import {
   isServiceAvailable,
   getRecognizedClasses,
@@ -26,12 +26,18 @@ import {
 const { width } = Dimensions.get("screen");
 
 export default function App() {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["48%", "100%"], []);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
   const [appIsReady, setAppIsReady] = useState(false);
   const [hasPermissionCamera, setHasPermissionCamera] = useState(false);
   const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
 
   const [predicted, setPredicted] = useState({
-    name: "PlantRecog",
+    name: "",
     score: null,
   });
   const [allPredicted, setAllPredicted] = useState([
@@ -108,19 +114,38 @@ export default function App() {
         hasPermissionPicker={hasPermissionPicker}
         recognizeImage={recognizeImage}
       />
-      <ScrollView
-        contentContainerStyle={styles.scrollViewContainer}
-        showsVerticalScrollIndicator={false}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
       >
-        <H1 text={predicted.name.toUpperCase()} />
-        {allPredicted[0].score === null ? (
-          <H3 text="Know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs." />
-        ) : (
-          allPredicted.map((d) => {
-            return <H3 key={d.name} text={d.name + ": " + d.score} />;
-          })
-        )}
-      </ScrollView>
+        <View style={styles.scrollViewContainer}>
+          {allPredicted[0].score === null ? (
+            <>
+              <H3 text="Get Started" />
+              <Paragraph
+                style={{ marginBottom: 10 }}
+                text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it."
+              />
+            </>
+          ) : (
+            <>
+              <H1 text={predicted.name.toUpperCase()} />
+              {allPredicted.map((d) => {
+                return (
+                  <>
+                    <H3 key={d.name} text={d.name + ": " + d.score} />
+                  </>
+                );
+              })}
+            </>
+          )}
+          <H3 text="About" />
+          <H2 text="PlantRecog" />
+          <Paragraph text="Know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs." />
+        </View>
+      </BottomSheet>
     </View>
   );
 }
@@ -128,7 +153,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F9F9",
+    // backgroundColor: "#F9F9F9",
+    backgroundColor: "black",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",

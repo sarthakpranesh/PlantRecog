@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Text } from "react-native";
 
-import { HTextFormatter } from ".";
+export const H3TextFormatter = (text: string) => {
+  return text.toUpperCase();
+};
 
 export type H3Params = {
   text: string;
@@ -20,7 +22,7 @@ const H3 = ({ text, style }: H3Params) => {
         style,
       ]}
     >
-      {HTextFormatter(text)}
+      {H3TextFormatter(text)}
     </Text>
   );
 };

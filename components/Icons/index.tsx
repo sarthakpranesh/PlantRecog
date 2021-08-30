@@ -1,4 +1,5 @@
 import Camera from "./camera";
 import Folder from "./folder";
+import Github from "./github";
 
-export { Camera, Folder };
+export { Camera, Folder, Github };

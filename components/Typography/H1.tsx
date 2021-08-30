@@ -1,7 +1,11 @@
 import * as React from "react";
 import { Text } from "react-native";
 
-import { HTextFormatter } from ".";
+export const H1TextFormatter = (text: string) => {
+  const firstLetter = text.split("")[0].toUpperCase();
+  const formatted = firstLetter + text.slice(1, text.length);
+  return formatted;
+};
 
 export type H1Params = {
   text: string;
@@ -20,7 +24,7 @@ const H1 = ({ text, style }: H1Params) => {
         style,
       ]}
     >
-      {HTextFormatter(text)}
+      {H1TextFormatter(text)}
     </Text>
   );
 };

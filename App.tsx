@@ -2,6 +2,7 @@ import "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import * as Linking from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, {
@@ -18,10 +19,12 @@ import {
   Alert,
   BackHandler,
   Image,
+  TouchableOpacity,
 } from "react-native";
 
 // importing components
 import CusCamera from "./components/Camera";
+import { Github } from "./components/Icons";
 // importing services
 import { H1, H2, H3, Paragraph } from "./components/Typography";
 import {
@@ -133,7 +136,7 @@ export default function App() {
             <>
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
-              {allPredicted.slice(1, allPredicted.length).map((d, i) => {
+              {allPredicted.map((d, i) => {
                 return (
                   <>
                     <H3 key={`${i}`} text={d.name + ": " + d.score} />
@@ -145,7 +148,15 @@ export default function App() {
           <H2 style={{ marginTop: 10 }} text="Get Started" />
           <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
           <H2 style={{ marginTop: 10 }} text="About" />
-          <Paragraph text="PlantRecog is an Open Source project. It allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github. Show your support by leaving a 🌟 on our Github Repo" />
+          <Paragraph text="PlantRecog is an Open Source project. It allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github. Show your support by leaving a 🌟 on our Github Repo (link below)" />
+          <TouchableOpacity
+            style={styles.github}
+            onPress={() =>
+              Linking.openURL("https://github.com/sarthakpranesh/PlantRecog")
+            }
+          >
+            <Github />
+          </TouchableOpacity>
         </BottomSheetScrollView>
       </BottomSheet>
     </View>
@@ -175,5 +186,17 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: "cover",
     borderRadius: 8,
+  },
+  github: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: `rgba(249, 249, 249, 0.8)`,
+    alignSelf: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
   },
 });

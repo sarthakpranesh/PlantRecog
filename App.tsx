@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as SplashScreen from "expo-splash-screen";
@@ -5,7 +6,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   Dimensions,
   TouchableOpacity,

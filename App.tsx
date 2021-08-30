@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as SplashScreen from "expo-splash-screen";
@@ -126,15 +126,17 @@ export default function App() {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
       >
-        <View style={styles.scrollViewContainer}>
+        <BottomSheetScrollView
+          contentContainerStyle={styles.scrollViewContainer}
+        >
           {image === null ? null : (
             <>
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
-              {allPredicted.slice(1, allPredicted.length).map((d) => {
+              {allPredicted.slice(1, allPredicted.length).map((d, i) => {
                 return (
                   <>
-                    <H3 key={d.name} text={d.name + ": " + d.score} />
+                    <H3 key={`${i}`} text={d.name + ": " + d.score} />
                   </>
                 );
               })}
@@ -144,7 +146,7 @@ export default function App() {
           <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
           <H2 style={{ marginTop: 10 }} text="About" />
           <Paragraph text="PlantRecog is an Open Source project. It allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github. Show your support by leaving a 🌟 on our Github Repo" />
-        </View>
+        </BottomSheetScrollView>
       </BottomSheet>
     </View>
   );

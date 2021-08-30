@@ -1,7 +1,7 @@
 import { Camera as ExpoCamera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
-import { TouchableOpacity, StyleSheet, Dimensions, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 
 // importing components
 import { Camera as CameraIcon, Folder } from "../Icons";
@@ -21,13 +21,6 @@ const Camera = ({
   recognizeImage,
 }: CameraProps) => {
   const takePictureAsync = async () => {
-    if (!hasPermissionCamera) {
-      const { status } = await ExpoCamera.requestPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Oh! Snap", "App does not have permission for the Camera!");
-      }
-    }
-
     const photo = await camera.takePictureAsync({
       quality: 1,
     });
@@ -36,16 +29,6 @@ const Camera = ({
   };
 
   const pickImage = async () => {
-    if (!hasPermissionPicker) {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Oh! Snap",
-          "Not having enough permission to open gallery!"
-        );
-      }
-    }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

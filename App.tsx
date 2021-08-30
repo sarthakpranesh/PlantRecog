@@ -1,7 +1,8 @@
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,6 +11,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  BackHandler,
 } from "react-native";
 
 // importing components
@@ -27,6 +29,7 @@ const { width } = Dimensions.get("screen");
 let camera: Camera;
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
   const [hasPermissionCamera, setHasPermissionCamera] = useState(false);
   const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
 
@@ -42,80 +45,71 @@ export default function App() {
   ]);
   const [recognized, setRecognized] = useState([]);
 
+  // do all permission tasks and initial server requests
   useEffect(() => {
     (async () => {
-      const [isPlantServiceUp, cameraPer, pickerPer] = await Promise.all([
-        isServiceAvailable(),
-        Camera.requestPermissionsAsync(),
-        ImagePicker.requestMediaLibraryPermissionsAsync(),
-      ]);
+      await SplashScreen.preventAutoHideAsync();
+      const [isPlantServiceUp, cameraPer, pickerPer, recogPayload] =
+        await Promise.all([
+          isServiceAvailable(),
+          Camera.requestPermissionsAsync(),
+          ImagePicker.requestMediaLibraryPermissionsAsync(),
+          getRecognizedClasses(),
+        ]);
       if (!isPlantServiceUp) {
         Alert.alert(
-          "Service Down",
-          "The service is currently unavailable, please check later"
+          "Oh! Snap",
+          "The service is currently unavailable, please check later!",
+          [{ text: "Close App", onPress: () => BackHandler.exitApp() }]
         );
-      } else {
-        setInterval(() => {
-          isServiceAvailable();
-        }, 10 * 60 * 1000);
       }
       setHasPermissionCamera(cameraPer.status === "granted");
       setHasPermissionPicker(pickerPer.status === "granted");
+      setAppIsReady(true);
+      setRecognized(recogPayload.recognized);
     })();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const payload = await getRecognizedClasses();
-      if (payload.recognized) {
-        setRecognized(payload.recognized);
-      }
-    })();
-  }, []);
+  // to avoid flicker remove the splash, when actual app renders after appIsReady changes to "true"
+  const onLayout = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
 
-  if (hasPermissionCamera === null) {
-    return <View />;
-  }
-
-  if (hasPermissionCamera === false) {
-    return <Text>No access to camera</Text>;
+  // if app is not ready then render nothing
+  if (!appIsReady) {
+    return null;
   }
 
   const takePictureAsync = async () => {
-    if (camera === null) {
-      return;
+    if (!hasPermissionCamera) {
+      const { status } = await Camera.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Oh! Snap", "App does not have permission for the Camera!");
+      } else {
+        setHasPermissionCamera(true);
+      }
     }
-
-    setPredicted({
-      name: "Processing Image...",
-      score: null,
-    });
 
     const photo = await camera.takePictureAsync({
       quality: 0,
     });
 
-    try {
-      const payload: any = await getFlowerImagePrediction(photo.uri);
-      if (payload.predictions !== null) {
-        setPredicted(payload.predictions[0]);
-        setAllPredicted(payload.predictions);
-      } else {
-        return Alert.alert(
-          "Ops",
-          "Looks like something bad happened, please try again!"
-        );
-      }
-    } catch (err) {
-      console.log("Request failed");
-    }
+    recognizeImage(photo.uri);
   };
 
   const pickImage = async () => {
     if (!hasPermissionPicker) {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Error", "Not having enough permission to open gallery!");
+        Alert.alert(
+          "Oh! Snap",
+          "Not having enough permission to open gallery!"
+        );
+      } else {
+        setHasPermissionPicker(true);
       }
     }
 
@@ -126,32 +120,34 @@ export default function App() {
       quality: 0,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
-      try {
-        setPredicted({
-          name: "Processing Image...",
-          score: null,
-        });
-        const payload: any = await getFlowerImagePrediction(result.uri);
-        if (payload.predictions !== null) {
-          setPredicted(payload.predictions[0]);
-          setAllPredicted(payload.predictions);
-        } else {
-          return Alert.alert(
-            "Ops",
-            "Looks like something bad happened, please try again!"
-          );
-        }
-      } catch (err) {
-        console.log(err.message);
+      recognizeImage(result.uri);
+    }
+  };
+
+  const recognizeImage = async (image: string) => {
+    try {
+      setPredicted({
+        name: "Processing Image...",
+        score: null,
+      });
+      const payload: any = await getFlowerImagePrediction(image);
+      if (payload.predictions !== null) {
+        setPredicted(payload.predictions[0]);
+        setAllPredicted(payload.predictions);
+      } else {
+        return Alert.alert(
+          "Ops",
+          "Looks like something bad happened, please try again!"
+        );
       }
+    } catch (err) {
+      console.log(err.message);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayout}>
       <StatusBar hidden />
       <Camera
         style={styles.camera}

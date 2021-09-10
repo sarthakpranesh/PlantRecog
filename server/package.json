@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "@tensorflow/tfjs-node": "^3.8.0",
-    "@tensorflow/tfjs-tflite": "0.0.1-alpha.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1"

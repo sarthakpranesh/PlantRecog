@@ -8,7 +8,7 @@ import fetch from "node-fetch";
  *   to aid the applications.
  */
 
-const baseUrl = "https://plantrecog.herokuapp.com/";
+const baseUrl = "https://plantrecog.herokuapp.com/v1/";
 
 // isServiceAvailable calls the server to make sure
 // if the server's are running and are available
@@ -33,11 +33,11 @@ export const isServiceAvailable = async () => {
 // then fetched for the latest version available
 export const getRecognizedClasses = async () => {
   try {
-    const rawResp = await fetch(baseUrl + "all");
+    const rawResp = await fetch(baseUrl + "details");
     const resp = await rawResp.json();
     console.log(
       "From service->plantRecog->getRecognizedClasses response:",
-      resp
+      resp.message
     );
     return resp.payload;
   } catch (err) {
@@ -76,11 +76,7 @@ export const getFlowerImagePrediction = async (photoUri) => {
       "From service->plantRecog->getFlowerImagePrediction response:",
       resp
     );
-    if (resp.status === 2) {
-      return resp.payload;
-    } else {
-      return null;
-    }
+    return resp.payload.predictions;
   } catch (err) {
     console.log(
       "From service->photoRecog->getFlowerImagePrediction error:",

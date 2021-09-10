@@ -47,7 +47,7 @@ export default function App() {
   const [allPredicted, setAllPredicted] = useState([
     {
       name: "",
-      score: null,
+      score: 0,
     },
   ]);
   const [recognized, setRecognized] = useState([]);
@@ -98,16 +98,16 @@ export default function App() {
         },
       ]);
       setImage(image);
-      const payload: any = await getFlowerImagePrediction(image);
-      if (payload.predictions !== null) {
-        setAllPredicted(payload.predictions);
+      const predictions: any = await getFlowerImagePrediction(image);
+      if (predictions !== null) {
+        setAllPredicted(predictions);
       } else {
         return Alert.alert(
           "Ops",
           "Looks like something bad happened, please try again!"
         );
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err.message);
     }
   };
@@ -133,9 +133,7 @@ export default function App() {
                   return null;
                 }
                 return (
-                  <>
-                    <H3 key={`${i}`} text={d.name + ": " + d.score} />
-                  </>
+                  <H3 key={d.name} text={d.name + ": " + d.score} />
                 );
               })}
             </>

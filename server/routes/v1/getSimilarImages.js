@@ -9,7 +9,9 @@ const cache = new NodeCache({ stdTTL: 60*60*24 });
 app.get("/images/:name", async (res, req) => {
     var name = req.req.params.name;
     let imgs = cache.get(name);
-    if (imgs === undefined) {
+    let isCacheMiss = imgs === undefined;
+    if (isCacheMiss) {
+        wasTheirImages = false;
         let browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox','--disable-setuid-sandbox']
@@ -23,27 +25,34 @@ app.get("/images/:name", async (res, req) => {
             page.keyboard.press("Enter"),
         ]);
         imgs = await page.evaluate(() => {
-            let divWrapper = document.getElementsByClassName("gBPM8")[0];
-            let imgs = divWrapper.querySelectorAll("img");
-            let images = [];
-            for (let i = 0; i < 20; i++) {
-                images.push(imgs[0].src);
+            try {
+                let divWrapper = document.getElementsByClassName("gBPM8")[0];
+                let imgs = divWrapper.querySelectorAll("img");
+                let images = [];
+                for (let i = 0; i < 10; i++) {
+                    images.push(imgs[0].src);
+                }
+                return images;
+            } catch(err) {
+                console.log(err);
+                return [];
             }
-            return images;
         });
-        cache.set(name, imgs);
+        browser.close();
     }
-    return res.res
-        .setHeader("Content-type", "application/json")
-        .status(200)
-        .send(
+    res.res.status(200).setHeader("Content-type", "application/json").send(
             JSON.stringify({
                 message: "Success",
                 payload: {
                     images: imgs,
                 },
             })
-        );
+        )
+        .end();
+    if (isCacheMiss) {
+        cache.set(name, imgs);
+    }
+    return;
 });
 
 module.exports = app;

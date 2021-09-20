@@ -9,7 +9,8 @@ const cache = new NodeCache({ stdTTL: 60*60*24 });
 app.get("/wiki/:name", async (res, req) => {
     var name = req.req.params.name;
     let wiki = cache.get(name+"Wiki");
-    if (wiki === undefined) {
+    const isCacheMiss = wiki === undefined;
+    if (isCacheMiss) {
         let browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox','--disable-setuid-sandbox']
@@ -22,29 +23,35 @@ app.get("/wiki/:name", async (res, req) => {
             page.waitForNavigation(),
             page.keyboard.press("Enter"),
         ]);
-        await page.screenshot({path: "./example.png"})
         wiki = await page.evaluate(() => {
-            let divWrapper = document.getElementsByClassName("g")[0];
-            let description = divWrapper.getElementsByClassName("lEBKkf")[0].innerText;
-            let wikiLink = divWrapper.getElementsByTagName("a")[0].href;
-            return {
-                description,
-                wikiLink,
-            };
+            try {
+                let divWrapper = document.getElementsByClassName("g")[0];
+                let description = divWrapper.getElementsByClassName("lEBKkf")[0].innerText;
+                let wikiLink = divWrapper.getElementsByTagName("a")[0].href;
+                return {
+                    description,
+                    wikiLink,
+                };
+            } catch (err) {
+                console.log(err);
+                return {
+                    description: "",
+                    wikiLink: "",
+                }
+            }
         });
-        cache.set(name+"Wiki", wiki);
+        browser.close();
     }
-    return res.res
-        .setHeader("Content-type", "application/json")
-        .status(200)
-        .send(
+    res.res.status(200).setHeader("Content-type", "application/json").send(
             JSON.stringify({
                 message: "Success",
-                payload: {
-                    wiki,
-                },
+                payload: wiki,
             })
-        );
+        )
+        .end();
+    if (isCacheMiss) {
+        cache.set(name+"Wiki", wiki);
+    }
 });
 
 module.exports = app;

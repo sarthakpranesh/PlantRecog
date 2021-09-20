@@ -2,6 +2,7 @@ const tf = require("@tensorflow/tfjs-node");
 const cors = require("cors");
 const express = require("express");
 const fileUpload = require("express-fileupload");
+const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 
 app = express();
@@ -11,6 +12,10 @@ const models = {};
 let latestVer = "";
 
 // using some middleware
+app.use(rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 20,
+}));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

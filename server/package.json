@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+    "express-rate-limit": "^5.3.0",
     "node-cache": "^5.1.2",
     "puppeteer": "^10.2.0"
   },

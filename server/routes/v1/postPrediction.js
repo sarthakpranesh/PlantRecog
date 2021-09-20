@@ -6,10 +6,7 @@ app.post("/predict", async (res, req) => {
     try {
       let image;
       if (req.req.files.image === undefined) {
-        return res.res
-          .setHeader("Content-type", "application/json")
-          .status(400)
-          .send(
+        return res.res.status(400).setHeader("Content-type", "application/json").send(
             JSON.stringify({
               message: "Bad Request!",
             })
@@ -44,10 +41,7 @@ app.post("/predict", async (res, req) => {
         }));
 
       // send the top 5 predictions back to client
-      res.res
-        .setHeader("Content-type", "application/json")
-        .status(200)
-        .end(
+      return res.res.status(200).setHeader("Content-type", "application/json").send(
           JSON.stringify({
             messages: "Success",
             payload: {
@@ -57,10 +51,7 @@ app.post("/predict", async (res, req) => {
         );
     } catch (err) {
       console.log(err.message);
-      res.res
-        .setHeader("Content-type", "application/json")
-        .status(500)
-        .end(
+      return res.res.status(500).setHeader("Content-type", "application/json").send(
           JSON.stringify({
             messages: "Failed",
             payload: {

@@ -20,6 +20,7 @@ const H2 = ({ text, style }: H2Params) => {
           fontSize: 18,
           fontWeight: "bold",
           color: "#373D3F",
+          marginTop: 10,
         },
         style,
       ]}

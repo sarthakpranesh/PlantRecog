@@ -2,7 +2,7 @@
   "expo": {
     "name": "PlantRecog",
     "slug": "PlantRecog",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F9F9F9"
       },
-      "package": "com.sarthakpranesh.PlantRecog"
+      "package": "com.sarthakpranesh.PlantRecog",
+      "jsEngine": "hermes"
     },
     "web": {
       "favicon": "./assets/favicon.png"

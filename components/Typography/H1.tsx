@@ -20,6 +20,7 @@ const H1 = ({ text, style }: H1Params) => {
           fontSize: 32,
           fontWeight: "bold",
           color: "#373D3F",
+          marginTop: 12,
         },
         style,
       ]}

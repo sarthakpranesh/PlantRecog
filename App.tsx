@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as Linking from "expo-linking";
@@ -25,13 +25,16 @@ import {
 // importing components
 import CusCamera from "./components/Camera";
 import { Github } from "./components/Icons";
-// importing services
 import { H1, H2, H3, Paragraph } from "./components/Typography";
+// importing services
 import {
   isServiceAvailable,
   getRecognizedClasses,
   getFlowerImagePrediction,
+  getSimilarImages,
+  getWiki,
 } from "./services/plantRecog";
+import { floatToPercentage } from "./services/math";
 
 const { width } = Dimensions.get("screen");
 
@@ -50,6 +53,8 @@ export default function App() {
       score: 0,
     },
   ]);
+  const [similarImages, setSimilarImages] = useState([]);
+  const [wiki, setWiki] = useState({description: "", wikiLink: ""});
   const [recognized, setRecognized] = useState([]);
 
   // do all permission tasks and initial server requests
@@ -107,6 +112,12 @@ export default function App() {
           "Looks like something bad happened, please try again!"
         );
       }
+      const [images, wiki] = await Promise.all([
+        getSimilarImages(predictions[0].name),
+        getWiki(predictions[0].name),
+      ])
+      setSimilarImages(images);
+      setWiki(wiki);
     } catch (err: any) {
       console.log(err.message);
     }
@@ -125,22 +136,58 @@ export default function App() {
           contentContainerStyle={styles.scrollViewContainer}
         >
           {image === null ? null : (
-            <>
+            <View>
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
-              {allPredicted.map((d, i) => {
+              <Paragraph style={{ marginTop: 0 }} text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`} />
+              <H3 text="Plant Images" />
+              <BottomSheetFlatList
+                style={{
+                  borderRadius: 8,
+                  backgroundColor: "#F9F9F9",
+                  marginBottom: 10,
+                }}
+                horizontal={true}
+                data={similarImages}
+                keyExtractor={(_, i) => `${i}`}
+                renderItem={({item}) => {
+                  return (
+                    <Image 
+                      style={{
+                        width: 100,
+                        height: 160,
+                        resizeMode: "cover",
+                        margin: 4,
+                        borderRadius: 8,
+                      }} 
+                      source={{ uri: item }}
+                    />
+                  );
+                }}
+              />
+              <H3 text="Description" />
+              <Paragraph text={wiki.description} />
+              <TouchableOpacity onPress={() => {
+                if (wiki.wikiLink !== "") {
+                  Linking.openURL(wiki.wikiLink);
+                }
+              }}>
+                <H3 style={{color: "blue", marginTop: 0,}} text="Wikipedia" />
+              </TouchableOpacity>
+              <H3 text="Other Predictions" />
+              {allPredicted.slice(1).map((d, i) => {
                 if (d.score === 0) {
                   return null;
                 }
                 return (
-                  <H3 key={d.name} text={d.name + ": " + d.score} />
+                  <Paragraph style={{ marginTop: 0 }} key={d.name} text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`} />
                 );
               })}
-            </>
+            </View>
           )}
-          <H2 style={{ marginTop: 10 }} text="Get Started" />
+          <H2 text="Get Started" />
           <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
-          <H2 style={{ marginTop: 10 }} text="About" />
+          <H2 text="About" />
           <Paragraph text="PlantRecog is an Open Source project. It allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github. Show your support by leaving a 🌟 on our Github Repo (link below)" />
           <TouchableOpacity
             style={styles.github}
@@ -172,8 +219,6 @@ const styles = StyleSheet.create({
     alignContent: "flex-start",
     padding: 8,
     width,
-    backgroundColor: "#F9F9F9",
-    flex: 1,
   },
   plantImage: {
     width: "100%",
@@ -184,6 +229,8 @@ const styles = StyleSheet.create({
   github: {
     width: 40,
     height: 40,
+    borderColor: "black",
+    borderWidth: 1,
     borderRadius: 10,
     backgroundColor: "white",
     alignSelf: "center",
@@ -191,6 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    margin: 10,
+    elevation: 4
   },
 });

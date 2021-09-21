@@ -30,7 +30,7 @@ app.get("/images/:name", async (res, req) => {
                 let imgs = divWrapper.querySelectorAll("img");
                 let images = [];
                 for (let i = 0; i < 10; i++) {
-                    images.push(imgs[0].src);
+                    images.push(imgs[i].src);
                 }
                 return images;
             } catch(err) {

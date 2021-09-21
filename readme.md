@@ -22,6 +22,8 @@ The PlantRecog expo app is still under development phase, therefore please check
 <br />
 
 ## Recognition Service
+This is the documentation for free to use PlantRecog API hosted on Heroku.
+
 API link - https://plantrecog.herokuapp.com
 
 | Request | Payload | Description |

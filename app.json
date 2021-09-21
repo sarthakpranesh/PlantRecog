@@ -24,8 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F9F9F9"
       },
-      "package": "com.sarthakpranesh.PlantRecog",
-      "jsEngine": "hermes"
+      "package": "com.sarthakpranesh.PlantRecog"
     },
     "web": {
       "favicon": "./assets/favicon.png"

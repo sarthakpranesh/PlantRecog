@@ -97,6 +97,7 @@ export default function App() {
 
   const recognizeImage = async (image: string) => {
     try {
+      // Remove old predictions if any
       setAllPredicted([
         {
           name: "Processing",
@@ -104,6 +105,11 @@ export default function App() {
         },
       ]);
       setImage(image);
+      setSimilarImages([]);
+      setWiki({description: "", wikiLink: ""});
+      // animate bottom sheet to cover whole screen
+      bottomSheetRef.current?.snapToIndex(1);
+      // start prediction
       const predictions: any = await getFlowerImagePrediction(image);
       if (predictions !== null) {
         setAllPredicted(predictions);
@@ -123,6 +129,84 @@ export default function App() {
       console.log(err.message);
     }
   };
+
+  const renderImages = () => {
+    return (
+      <>
+        <H3 text="Plant Images" />
+        {similarImages.length === 0 ? (
+          <Paragraph text="Loading..." />
+        ) : (
+          <BottomSheetFlatList
+            style={{
+              borderRadius: 8,
+              backgroundColor: "#F9F9F9",
+              marginBottom: 10,
+            }}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            data={similarImages}
+            keyExtractor={(_, i) => `${i}`}
+            renderItem={({item}) => {
+              return (
+                <Image 
+                  style={{
+                    width: 100,
+                    height: 160,
+                    resizeMode: "cover",
+                    margin: 4,
+                    borderRadius: 8,
+                  }} 
+                  source={{ uri: item }}
+                />
+              );
+            }}
+          />
+        )}
+      </>
+    )
+  }
+
+  const renderWiki = () => {
+    return (
+      <>
+        <H3 text="Description" />
+        {wiki.description.length === 0 ? (
+          <Paragraph text="Loading..." />
+        ) : (
+          <>
+            <Paragraph text={wiki.description} />
+            <TouchableOpacity onPress={() => {
+              if (wiki.wikiLink !== "") {
+                Linking.openURL(wiki.wikiLink);
+              }
+            }}>
+              <H3 style={{color: "blue", marginTop: 0,}} text="Open in Wikipedia" />
+            </TouchableOpacity>
+          </>
+        )}
+      </>
+    )
+  }
+
+  const renderOtherPrediction = () => {
+    if (allPredicted.length <= 1) {
+      return null;
+    }
+    return (
+      <>
+        <H3 text="Other Predictions" />
+        {allPredicted.slice(1).map((d, i) => {
+          if (d.score === 0) {
+            return null;
+          }
+          return (
+            <Paragraph style={{ marginTop: 0 }} key={d.name} text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`} />
+          );
+        })}
+      </>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} onLayout={onLayout}>
@@ -145,51 +229,10 @@ export default function App() {
             <View>
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
-              <Paragraph style={{ marginTop: 0 }} text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`} />
-              <H3 text="Plant Images" />
-              <BottomSheetFlatList
-                style={{
-                  borderRadius: 8,
-                  backgroundColor: "#F9F9F9",
-                  marginBottom: 10,
-                }}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                data={similarImages}
-                keyExtractor={(_, i) => `${i}`}
-                renderItem={({item}) => {
-                  return (
-                    <Image 
-                      style={{
-                        width: 100,
-                        height: 160,
-                        resizeMode: "cover",
-                        margin: 4,
-                        borderRadius: 8,
-                      }} 
-                      source={{ uri: item }}
-                    />
-                  );
-                }}
-              />
-              <H3 text="Description" />
-              <Paragraph text={wiki.description} />
-              <TouchableOpacity onPress={() => {
-                if (wiki.wikiLink !== "") {
-                  Linking.openURL(wiki.wikiLink);
-                }
-              }}>
-                <H3 style={{color: "blue", marginTop: 0,}} text="Wikipedia" />
-              </TouchableOpacity>
-              <H3 text="Other Predictions" />
-              {allPredicted.slice(1).map((d, i) => {
-                if (d.score === 0) {
-                  return null;
-                }
-                return (
-                  <Paragraph style={{ marginTop: 0 }} key={d.name} text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`} />
-                );
-              })}
+              <Paragraph text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`} />
+              {renderImages()}
+              {renderWiki()}
+              {renderOtherPrediction()}
             </View>
           )}
           <H2 text="Get Started" />

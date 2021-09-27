@@ -13,8 +13,8 @@ let latestVer = "";
 
 // using some middleware
 app.use(rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 20,
+  windowMs: 3 * 60 * 1000,
+  max: 10,
 }));
 app.use(cors());
 app.use(express.json());

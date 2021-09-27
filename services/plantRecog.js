@@ -16,21 +16,14 @@ const FetchBuilder = (route, conf = {}) => {
     try {
       const rawResp = await fetch(baseUrl + route, conf);
       const resp = await rawResp.json();
-      console.log(
-        `Service->PlantRecog->${route} response:`,
-        resp.message
-      );
+      console.log(`Service->PlantRecog->${route} response:`, resp.message);
       resolve(resp);
     } catch (err) {
-      console.log(
-        `Service->PlantRecog->${route} error:`,
-        err.message
-      );
+      console.log(`Service->PlantRecog->${route} error:`, err.message);
       reject(err);
     }
-  })
-}
-
+  });
+};
 
 // isServiceAvailable calls the server to make sure
 // if the server's are running and are available
@@ -42,7 +35,7 @@ export const isServiceAvailable = () => {
     } catch (err) {
       reject(err);
     }
-  })
+  });
 };
 
 // getRecognizedClasses calls the "/all" route on
@@ -57,37 +50,7 @@ export const getRecognizedClasses = () => {
     } catch (err) {
       reject(err);
     }
-  })
-};
-
-// getFlowerImagePrediction calls the "/predict"
-// route on the server and fetches the top five
-// predictions made by ML/DL model
-export const getFlowerImagePrediction = (photoUri) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      // create the file object
-      const imageToSend = {
-        uri: photoUri,
-        type: "image/jpeg",
-        name: "image.jpg",
-      };
-      // create the form data
-      const body = new FormData();
-      body.append("image", imageToSend);
-  
-      const resp = await FetchBuilder("predict", {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        method: "POST",
-        body,
-      })
-      resolve(resp.payload.predictions);
-    } catch (err) {
-      reject(err);
-    }
-  })
+  });
 };
 
 // getSimilarImages calls the "/images/:name"
@@ -96,7 +59,7 @@ export const getFlowerImagePrediction = (photoUri) => {
 export const getSimilarImages = (name) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp = await FetchBuilder("images/"+name);
+      const resp = await FetchBuilder("images/" + name);
       resolve(resp.payload.images);
     } catch (err) {
       reject(err);
@@ -110,7 +73,7 @@ export const getSimilarImages = (name) => {
 export const getWiki = (name) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp = await FetchBuilder("wiki/"+name);
+      const resp = await FetchBuilder("wiki/" + name);
       resolve(resp.payload);
     } catch (err) {
       reject(err);

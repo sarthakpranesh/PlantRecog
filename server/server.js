@@ -53,12 +53,12 @@ app.listen(process.env.PORT || 8080, async () => {
   console.log("Server started!");
   console.log("Loading ML model");
   try {
-    const modelVers = fs.readdirSync("./tfjs-models/");
+    const modelVers = fs.readdirSync("../tfjs-models/");
     console.log("ML models available:", modelVers);
     latestVer = modelVers[modelVers.length - 1];
     modelVers.forEach(async (ver) => {
       const model = await tf.loadLayersModel(
-        `file://tfjs-models/${ver}/model.json`,
+        `file://../tfjs-models/${ver}/model.json`,
         {
           strict: false,
         }

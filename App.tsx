@@ -1,5 +1,10 @@
 import "react-native-gesture-handler";
-import BottomSheet, { BottomSheetScrollView, BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetScrollView,
+  BottomSheetFlatList,
+} from "@gorhom/bottom-sheet";
+import * as tf from "@tensorflow/tfjs";
+import { bundleResourceIO } from "@tensorflow/tfjs-react-native";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as Linking from "expo-linking";
@@ -28,14 +33,17 @@ import CusCamera from "./components/Camera";
 import { Github } from "./components/Icons";
 import { H1, H2, H3, Paragraph } from "./components/Typography";
 // importing services
+import { floatToPercentage } from "./services/math";
 import {
   isServiceAvailable,
   getRecognizedClasses,
-  getFlowerImagePrediction,
   getSimilarImages,
   getWiki,
 } from "./services/plantRecog";
-import { floatToPercentage } from "./services/math";
+import { preprocessImage, getPredictedClass } from "./services/tfjs";
+
+const modelWeights = require("./tfjs-models/group1-shard1of1.bin");
+const modelJson = require("./tfjs-models/model.json");
 
 const { width } = Dimensions.get("screen");
 
@@ -43,6 +51,7 @@ export default function App() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["48%", "100%"], []);
 
+  const [model, setModel] = useState<any | null>(null);
   const [appIsReady, setAppIsReady] = useState(false);
   const [hasPermissionCamera, setHasPermissionCamera] = useState(false);
   const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
@@ -55,31 +64,34 @@ export default function App() {
     },
   ]);
   const [similarImages, setSimilarImages] = useState([]);
-  const [wiki, setWiki] = useState({description: "", wikiLink: ""});
+  const [wiki, setWiki] = useState({ description: "", wikiLink: "" });
   const [recognized, setRecognized] = useState([]);
 
   // do all permission tasks and initial server requests
   useEffect(() => {
     (async () => {
-      await SplashScreen.preventAutoHideAsync();
-      const [isPlantServiceUp, cameraPer, pickerPer, recogPayload] =
-        await Promise.all([
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        const [, cameraPer, pickerPer, recogPayload] = await Promise.all([
           isServiceAvailable(),
           Camera.requestPermissionsAsync(),
           ImagePicker.requestMediaLibraryPermissionsAsync(),
           getRecognizedClasses(),
+          tf.ready(),
         ]);
-      if (!isPlantServiceUp) {
-        Alert.alert(
-          "Oh! Snap",
-          "The service is currently unavailable, please check later!",
-          [{ text: "Close App", onPress: () => BackHandler.exitApp() }]
+        const model = await tf.loadLayersModel(
+          bundleResourceIO(modelJson, modelWeights)
         );
+        await Promise.all([
+          setModel(model),
+          setHasPermissionCamera(cameraPer.status === "granted"),
+          setHasPermissionPicker(pickerPer.status === "granted"),
+          setAppIsReady(true),
+          setRecognized(recogPayload.recognized),
+        ]);
+      } catch (err) {
+        console.log(err);
       }
-      setHasPermissionCamera(cameraPer.status === "granted");
-      setHasPermissionPicker(pickerPer.status === "granted");
-      setAppIsReady(true);
-      setRecognized(recogPayload.recognized);
     })();
   }, []);
 
@@ -98,19 +110,24 @@ export default function App() {
   const recognizeImage = async (image: string) => {
     try {
       // Remove old predictions if any
-      setAllPredicted([
-        {
-          name: "Processing",
-          score: 0,
-        },
+      await Promise.all([
+        setAllPredicted([
+          {
+            name: "Processing",
+            score: 0,
+          },
+        ]),
+        setImage(image),
+        setSimilarImages([]),
+        setWiki({ description: "", wikiLink: "" }),
       ]);
-      setImage(image);
-      setSimilarImages([]);
-      setWiki({description: "", wikiLink: ""});
       // animate bottom sheet to cover whole screen
       bottomSheetRef.current?.snapToIndex(1);
-      // start prediction
-      const predictions: any = await getFlowerImagePrediction(image);
+      // load and preprocess image
+      const processedImage = await preprocessImage(image);
+      const rawPredictions = await model.predict(processedImage);
+      const predictions = await getPredictedClass(rawPredictions);
+      // const predictions: any = await getFlowerImagePrediction(image, model);
       if (predictions !== null) {
         setAllPredicted(predictions);
       } else {
@@ -122,7 +139,7 @@ export default function App() {
       const [images, wiki] = await Promise.all([
         getSimilarImages(predictions[0].name),
         getWiki(predictions[0].name),
-      ])
+      ]);
       setSimilarImages(images);
       setWiki(wiki);
     } catch (err: any) {
@@ -143,20 +160,20 @@ export default function App() {
               backgroundColor: "#F9F9F9",
               marginBottom: 10,
             }}
-            horizontal={true}
+            horizontal
             showsHorizontalScrollIndicator={false}
             data={similarImages}
             keyExtractor={(_, i) => `${i}`}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return (
-                <Image 
+                <Image
                   style={{
                     width: 100,
                     height: 160,
                     resizeMode: "cover",
                     margin: 4,
                     borderRadius: 8,
-                  }} 
+                  }}
                   source={{ uri: item }}
                 />
               );
@@ -164,8 +181,8 @@ export default function App() {
           />
         )}
       </>
-    )
-  }
+    );
+  };
 
   const renderWiki = () => {
     return (
@@ -176,18 +193,23 @@ export default function App() {
         ) : (
           <>
             <Paragraph text={wiki.description} />
-            <TouchableOpacity onPress={() => {
-              if (wiki.wikiLink !== "") {
-                Linking.openURL(wiki.wikiLink);
-              }
-            }}>
-              <H3 style={{color: "blue", marginTop: 0,}} text="Open in Wikipedia" />
+            <TouchableOpacity
+              onPress={() => {
+                if (wiki.wikiLink !== "") {
+                  Linking.openURL(wiki.wikiLink);
+                }
+              }}
+            >
+              <H3
+                style={{ color: "blue", marginTop: 0 }}
+                text="Open in Wikipedia"
+              />
             </TouchableOpacity>
           </>
         )}
       </>
-    )
-  }
+    );
+  };
 
   const renderOtherPrediction = () => {
     if (allPredicted.length <= 1) {
@@ -201,12 +223,16 @@ export default function App() {
             return null;
           }
           return (
-            <Paragraph style={{ marginTop: 0 }} key={d.name} text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`} />
+            <Paragraph
+              style={{ marginTop: 0 }}
+              key={d.name}
+              text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`}
+            />
           );
         })}
       </>
     );
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container} onLayout={onLayout}>
@@ -216,11 +242,7 @@ export default function App() {
         hasPermissionPicker={hasPermissionPicker}
         recognizeImage={recognizeImage}
       />
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-      >
+      <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
         <BottomSheetScrollView
           contentContainerStyle={styles.scrollViewContainer}
           showsVerticalScrollIndicator={false}
@@ -229,7 +251,9 @@ export default function App() {
             <View>
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
-              <Paragraph text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`} />
+              <Paragraph
+                text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`}
+              />
               {renderImages()}
               {renderWiki()}
               {renderOtherPrediction()}
@@ -289,6 +313,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 10,
-    elevation: 4
+    elevation: 4,
   },
 });

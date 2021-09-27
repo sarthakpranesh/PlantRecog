@@ -1,28 +1,31 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "start": "react-native start",
+    "build-android": "cd ./android && ./gradlew clean && ./gradlew assembleRelease"
   },
   "dependencies": {
-    "@gorhom/bottom-sheet": "^4.0.0-alpha.30",
+    "@gorhom/bottom-sheet": "^4.1.0",
+    "cross-fetch": "^3.1.4",
     "expo": "~42.0.1",
     "expo-camera": "^11.2.2",
-    "expo-image-picker": "~10.2.2",
-    "expo-linking": "~2.3.1",
+    "expo-image-picker": "^10.2.3",
+    "expo-linking": "^2.3.1",
     "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
-    "node-fetch": "^2.6.1",
+    "expo-updates": "~0.8.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native": "~0.63.4",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-reanimated": "~2.2.0",
     "react-native-responsive-fontsize": "^0.5.1",
-    "react-native-svg": "12.1.1",
+    "react-native-screens": "~3.4.0",
+    "react-native-svg": "^12.1.1",
+    "react-native-unimodules": "0.14.10",
     "react-native-web": "~0.13.12"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch from "cross-fetch";
 
 /*
  *   PlantRecog's ML/DL service to recognize

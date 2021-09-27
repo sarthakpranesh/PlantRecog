@@ -1,3 +1,4 @@
+import analytics from "@react-native-firebase/analytics";
 import { Camera as ExpoCamera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
@@ -21,6 +22,7 @@ const Camera = ({
   recognizeImage,
 }: CameraProps) => {
   const takePictureAsync = async () => {
+    analytics().logEvent("click_image");
     const photo = await camera.takePictureAsync({
       quality: 1,
     });
@@ -29,6 +31,7 @@ const Camera = ({
   };
 
   const pickImage = async () => {
+    analytics().logEvent("pick_image");
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,

@@ -3,6 +3,7 @@ import BottomSheet, {
   BottomSheetScrollView,
   BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
+import analytics from "@react-native-firebase/analytics";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as Linking from "expo-linking";
@@ -83,6 +84,9 @@ export default function App() {
       setHasPermissionPicker(pickerPer.status === "granted");
       setAppIsReady(true);
       setRecognized(recogPayload.recognized);
+      await analytics().logEvent("app_open", {
+        time: Date.now(),
+      });
     })();
   }, []);
 
@@ -102,6 +106,7 @@ export default function App() {
     try {
       // Remove old predictions if any
       await Promise.all([
+        analytics().logEvent("predict_image"),
         setAllPredicted([
           {
             name: "Processing",
@@ -255,9 +260,10 @@ export default function App() {
           />
           <TouchableOpacity
             style={styles.github}
-            onPress={() =>
+            onPress={async () => {
+              await analytics().logEvent("github_open");
               Linking.openURL("https://github.com/sarthakpranesh/PlantRecog")
-            }
+            }}
           >
             <Github />
           </TouchableOpacity>

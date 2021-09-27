@@ -1,3 +1,4 @@
+import analytics from "@react-native-firebase/analytics";
 import fetch from "cross-fetch";
 
 /*
@@ -20,6 +21,9 @@ const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
       resolve(resp);
     } catch (err: any) {
       console.log(`Service->PlantRecog->${route} error:`, err.message);
+      await analytics().logEvent("plantrecog-api-error", {
+        message: err.message,
+      });
       reject(err);
     }
   });

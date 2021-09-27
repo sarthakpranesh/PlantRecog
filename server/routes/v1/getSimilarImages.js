@@ -19,7 +19,7 @@ app.get("/images/:name", async (res, req) => {
         let page = await browser.newPage();
         await page.goto("https://www.google.co.in/imghp?hl=en&ogbl");
         await page.waitForSelector('input');
-        await page.type('input', name);
+        await page.type('input', `${name} flower or plant`);
         await Promise.all([
             page.waitForNavigation(),
             page.keyboard.press("Enter"),
@@ -29,7 +29,7 @@ app.get("/images/:name", async (res, req) => {
                 let divWrapper = document.getElementsByClassName("gBPM8")[0];
                 let imgs = divWrapper.querySelectorAll("img");
                 let images = [];
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 10; i++) {
                     images.push(imgs[i].src);
                 }
                 return images;

@@ -1,5 +1,8 @@
 import "react-native-gesture-handler";
-import BottomSheet, { BottomSheetScrollView, BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetScrollView,
+  BottomSheetFlatList,
+} from "@gorhom/bottom-sheet";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as Linking from "expo-linking";
@@ -28,6 +31,7 @@ import CusCamera from "./components/Camera";
 import { Github } from "./components/Icons";
 import { H1, H2, H3, Paragraph } from "./components/Typography";
 // importing services
+import { floatToPercentage } from "./services/math";
 import {
   isServiceAvailable,
   getRecognizedClasses,
@@ -35,7 +39,6 @@ import {
   getSimilarImages,
   getWiki,
 } from "./services/plantRecog";
-import { floatToPercentage } from "./services/math";
 
 const { width } = Dimensions.get("screen");
 
@@ -55,7 +58,7 @@ export default function App() {
     },
   ]);
   const [similarImages, setSimilarImages] = useState([]);
-  const [wiki, setWiki] = useState({description: "", wikiLink: ""});
+  const [wiki, setWiki] = useState({ description: "", wikiLink: "" });
   const [recognized, setRecognized] = useState([]);
 
   // do all permission tasks and initial server requests
@@ -98,18 +101,20 @@ export default function App() {
   const recognizeImage = async (image: string) => {
     try {
       // Remove old predictions if any
-      setAllPredicted([
-        {
-          name: "Processing",
-          score: 0,
-        },
+      await Promise.all([
+        setAllPredicted([
+          {
+            name: "Processing",
+            score: 0,
+          },
+        ]),
+        setImage(image),
+        setSimilarImages([]),
+        setWiki({ description: "", wikiLink: "" }),
       ]);
-      setImage(image);
-      setSimilarImages([]);
-      setWiki({description: "", wikiLink: ""});
       // animate bottom sheet to cover whole screen
       bottomSheetRef.current?.snapToIndex(1);
-      // start prediction
+      // call prediction service with image
       const predictions: any = await getFlowerImagePrediction(image);
       if (predictions !== null) {
         setAllPredicted(predictions);
@@ -122,7 +127,7 @@ export default function App() {
       const [images, wiki] = await Promise.all([
         getSimilarImages(predictions[0].name),
         getWiki(predictions[0].name),
-      ])
+      ]);
       setSimilarImages(images);
       setWiki(wiki);
     } catch (err: any) {
@@ -143,20 +148,20 @@ export default function App() {
               backgroundColor: "#F9F9F9",
               marginBottom: 10,
             }}
-            horizontal={true}
+            horizontal
             showsHorizontalScrollIndicator={false}
             data={similarImages}
             keyExtractor={(_, i) => `${i}`}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return (
-                <Image 
+                <Image
                   style={{
                     width: 100,
                     height: 160,
                     resizeMode: "cover",
                     margin: 4,
                     borderRadius: 8,
-                  }} 
+                  }}
                   source={{ uri: item }}
                 />
               );
@@ -164,8 +169,8 @@ export default function App() {
           />
         )}
       </>
-    )
-  }
+    );
+  };
 
   const renderWiki = () => {
     return (
@@ -176,18 +181,23 @@ export default function App() {
         ) : (
           <>
             <Paragraph text={wiki.description} />
-            <TouchableOpacity onPress={() => {
-              if (wiki.wikiLink !== "") {
-                Linking.openURL(wiki.wikiLink);
-              }
-            }}>
-              <H3 style={{color: "blue", marginTop: 0,}} text="Open in Wikipedia" />
+            <TouchableOpacity
+              onPress={() => {
+                if (wiki.wikiLink !== "") {
+                  Linking.openURL(wiki.wikiLink);
+                }
+              }}
+            >
+              <H3
+                style={{ color: "blue", marginTop: 0 }}
+                text="Open in Wikipedia"
+              />
             </TouchableOpacity>
           </>
         )}
       </>
-    )
-  }
+    );
+  };
 
   const renderOtherPrediction = () => {
     if (allPredicted.length <= 1) {
@@ -201,12 +211,16 @@ export default function App() {
             return null;
           }
           return (
-            <Paragraph style={{ marginTop: 0 }} key={d.name} text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`} />
+            <Paragraph
+              style={{ marginTop: 0 }}
+              key={d.name}
+              text={`Class: ${d.name}, Accuracy: ${floatToPercentage(d.score)}`}
+            />
           );
         })}
       </>
     );
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container} onLayout={onLayout}>
@@ -216,11 +230,7 @@ export default function App() {
         hasPermissionPicker={hasPermissionPicker}
         recognizeImage={recognizeImage}
       />
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-      >
+      <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
         <BottomSheetScrollView
           contentContainerStyle={styles.scrollViewContainer}
           showsVerticalScrollIndicator={false}
@@ -229,7 +239,9 @@ export default function App() {
             <View>
               <Image style={styles.plantImage} source={{ uri: image }} />
               <H1 text={allPredicted[0].name} />
-              <Paragraph text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`} />
+              <Paragraph
+                text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`}
+              />
               {renderImages()}
               {renderWiki()}
               {renderOtherPrediction()}
@@ -238,7 +250,9 @@ export default function App() {
           <H2 text="Get Started" />
           <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
           <H2 text="About" />
-          <Paragraph text="PlantRecog is an Open Source project. It allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github. Show your support by leaving a 🌟 on our Github Repo (link below)" />
+          <Paragraph
+            text={`PlantRecog is an Open Source project, it allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github and we can currently recognize ${recognized.length} plants from there flowers. Show your support by leaving a 🌟 on our Github Repo (click icon below)`}
+          />
           <TouchableOpacity
             style={styles.github}
             onPress={() =>
@@ -289,6 +303,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 10,
-    elevation: 4
+    elevation: 4,
   },
 });

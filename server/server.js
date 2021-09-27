@@ -12,10 +12,12 @@ const models = {};
 let latestVer = "";
 
 // using some middleware
-app.use(rateLimit({
-  windowMs: 3 * 60 * 1000,
-  max: 10,
-}));
+app.use(
+  rateLimit({
+    windowMs: 3 * 60 * 1000,
+    max: 10,
+  })
+);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,7 +30,7 @@ app.use((req, res, next) => {
         message: "Models not loaded yet, try again later!",
         payload: {},
       })
-    )
+    );
   }
   // if models are loaded then attach the model to request
   let model;
@@ -40,7 +42,7 @@ app.use((req, res, next) => {
   // continue with request
   req.mlModel = model;
   next();
-})
+});
 
 // routes v1
 app.use("/v1", require("./routes/v1/index"));

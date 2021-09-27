@@ -11,38 +11,31 @@ import fetch from "cross-fetch";
 const baseUrl = "https://plantrecog.herokuapp.com/v1/";
 
 // Global request builder to be used in all requests
-const FetchBuilder = (route, conf = {}) => {
+const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
   return new Promise(async (resolve, reject) => {
     try {
       const rawResp = await fetch(baseUrl + route, conf);
       const resp = await rawResp.json();
-      console.log(
-        `Service->PlantRecog->${route} response:`,
-        resp.message
-      );
+      console.log(`Service->PlantRecog->${route} response:`, resp.message);
       resolve(resp);
-    } catch (err) {
-      console.log(
-        `Service->PlantRecog->${route} error:`,
-        err.message
-      );
+    } catch (err: any) {
+      console.log(`Service->PlantRecog->${route} error:`, err.message);
       reject(err);
     }
-  })
-}
-
+  });
+};
 
 // isServiceAvailable calls the server to make sure
 // if the server's are running and are available
 export const isServiceAvailable = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      await FetchBuilder("");
+      await FetchBuilder("", undefined);
       resolve(true);
     } catch (err) {
       reject(err);
     }
-  })
+  });
 };
 
 // getRecognizedClasses calls the "/all" route on
@@ -52,18 +45,18 @@ export const isServiceAvailable = () => {
 export const getRecognizedClasses = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp = await FetchBuilder("details");
+      const resp: any = await FetchBuilder("details", undefined);
       resolve(resp.payload);
     } catch (err) {
       reject(err);
     }
-  })
+  });
 };
 
 // getFlowerImagePrediction calls the "/predict"
 // route on the server and fetches the top five
 // predictions made by ML/DL model
-export const getFlowerImagePrediction = (photoUri) => {
+export const getFlowerImagePrediction = (photoUri: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       // create the file object
@@ -75,28 +68,27 @@ export const getFlowerImagePrediction = (photoUri) => {
       // create the form data
       const body = new FormData();
       body.append("image", imageToSend);
-  
-      const resp = await FetchBuilder("predict", {
+      const resp: any = await FetchBuilder("predict", {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         method: "POST",
         body,
-      })
+      });
       resolve(resp.payload.predictions);
     } catch (err) {
       reject(err);
     }
-  })
+  });
 };
 
 // getSimilarImages calls the "/images/:name"
 // route on the server where name is the class
 // of the plant
-export const getSimilarImages = (name) => {
+export const getSimilarImages = (name: string) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp = await FetchBuilder("images/"+name);
+      const resp: any = await FetchBuilder(`images/${name}`, undefined);
       resolve(resp.payload.images);
     } catch (err) {
       reject(err);
@@ -107,10 +99,10 @@ export const getSimilarImages = (name) => {
 // getWiki calls the "/wiki/:name"
 // route on the server where name is the class
 // to retrieve the wikipedia description of the plant
-export const getWiki = (name) => {
+export const getWiki = (name: string) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp = await FetchBuilder("wiki/"+name);
+      const resp: any = await FetchBuilder(`wiki/${name}`, undefined);
       resolve(resp.payload);
     } catch (err) {
       reject(err);

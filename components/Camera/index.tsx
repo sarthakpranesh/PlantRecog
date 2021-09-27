@@ -6,7 +6,7 @@ import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 // importing components
 import { Camera as CameraIcon, Folder } from "../Icons";
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("window");
 let camera: ExpoCamera;
 
 export type CameraProps = {
@@ -64,7 +64,7 @@ const Camera = ({
 
 const styles = StyleSheet.create({
   camera: {
-    height: height / 2 + 50,
+    height: height / 2 + 100,
     width,
     display: "flex",
     flexDirection: "column",
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: `rgba(249, 249, 249, 0.8)`,
     position: "absolute",
-    bottom: 60,
+    bottom: 90,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: `rgba(249, 249, 249, 0.8)`,
     position: "absolute",
-    bottom: 60,
+    bottom: 90,
     right: 10,
     display: "flex",
     flexDirection: "column",

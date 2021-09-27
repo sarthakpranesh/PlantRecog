@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Text } from "react-native";
+import { RFValue } from "react-native-responsive-fontsize";
 
 export const H2TextFormatter = (text: string) => {
   const firstLetter = text.split("")[0].toUpperCase();
@@ -17,7 +18,7 @@ const H2 = ({ text, style }: H2Params) => {
     <Text
       style={[
         {
-          fontSize: 18,
+          fontSize: RFValue(18),
           fontWeight: "bold",
           color: "#373D3F",
           marginTop: 10,

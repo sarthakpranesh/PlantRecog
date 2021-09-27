@@ -15,6 +15,7 @@ import React, {
 import {
   StyleSheet,
   View,
+  SafeAreaView,
   Dimensions,
   Alert,
   BackHandler,
@@ -124,16 +125,21 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container} onLayout={onLayout}>
+    <SafeAreaView style={styles.container} onLayout={onLayout}>
       <StatusBar hidden />
       <CusCamera
         hasPermissionCamera={hasPermissionCamera}
         hasPermissionPicker={hasPermissionPicker}
         recognizeImage={recognizeImage}
       />
-      <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+      >
         <BottomSheetScrollView
           contentContainerStyle={styles.scrollViewContainer}
+          showsVerticalScrollIndicator={false}
         >
           {image === null ? null : (
             <View>
@@ -148,6 +154,7 @@ export default function App() {
                   marginBottom: 10,
                 }}
                 horizontal={true}
+                showsHorizontalScrollIndicator={false}
                 data={similarImages}
                 keyExtractor={(_, i) => `${i}`}
                 renderItem={({item}) => {
@@ -199,7 +206,7 @@ export default function App() {
           </TouchableOpacity>
         </BottomSheetScrollView>
       </BottomSheet>
-    </View>
+    </SafeAreaView>
   );
 }
 

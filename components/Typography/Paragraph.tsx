@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Text } from "react-native";
+import { RFValue } from "react-native-responsive-fontsize";
 
 export type ParagraphParams = {
   text: string;
@@ -11,7 +12,7 @@ const Paragraph = ({ text, style }: ParagraphParams) => {
     <Text
       style={[
         {
-          fontSize: 14,
+          fontSize: RFValue(14),
           fontWeight: "800",
           color: "#373D3F",
           textAlign: "justify",

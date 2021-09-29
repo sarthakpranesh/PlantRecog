@@ -26,7 +26,7 @@ app.get("/images/:name", async (res, req) => {
         const divWrapper = document.getElementsByClassName("gBPM8")[0];
         const imgs = divWrapper.querySelectorAll("img");
         const images = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 5; i++) {
           images.push(imgs[i].src);
         }
         return images;

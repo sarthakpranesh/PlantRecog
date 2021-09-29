@@ -1,12 +1,12 @@
-<img src="./repoAssets/1024.png" width="100" />
+<img src="./repoAssets/banner.png" />
 
 <br />
 
 # PlantRecog
 
-PlantRecog aims to become or lead to the goto "Free Plant Recognition" solution. Why? As of today, 30th August 2021, their aren't many online free services or apps available to solve this problem. The existing solutions are mostly paid and have high subscription amounts per year. I want to create a fairly basic but usable set of services (app + api + models) for people who want to develop tools that recognize plants.
+PlantRecog aims to become or lead to the goto "Free Plant Recognition" solution. Why? As of today, 30th August 2021, there aren't many online free services or apps available to solve this problem. The existing solutions are mostly paid and have high subscription amounts per year. I want to create a fairly basic but usable set of services (app + api + models) for people who want to develop tools that recognize plants.
 
-The current version of the project is able to recognize 299 plants using their flowers. This flower recognition model is hosted as an API available for public use and is also used in the PlantRecog App that can be downloaded from `Github Releases` (soon will be available on Google Play Store).
+The current version of the project is able to recognize 299 plants using their flowers. This flower recognition model and API developed under this project are available freely in the repository. They can be self hosted by anyone who wants to use these services for building their own apps. These are also used in the PlantRecog App that can be downloaded from `Github Releases` (soon will be available on Google Play Store).
 
 This is work in progress :>
 
@@ -18,9 +18,7 @@ The PlantRecog React Native app is still under development phase, therefore plea
 <br />
 
 ## Recognition Service
-This is the documentation for free to use PlantRecog API hosted on Heroku.
-
-API link - https://plantrecog.herokuapp.com
+This is the documentation for the server API that is used in PlantRecog. This server can be hosted online to develop apps that require such a service.
 
 | Request | Payload | Description |
 | --- | --- | --- |

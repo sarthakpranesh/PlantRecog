@@ -50,18 +50,18 @@ export default function App() {
   const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
 
   const [image, setImage] = useState<string | null>(null);
-  const [allPredicted, setAllPredicted] = useState([
+  const [allPredicted, setAllPredicted] = useState<Predictions>([
     {
       name: "",
       score: 0,
     },
   ]);
-  const [details, setDetails] = useState({
+  const [details, setDetails] = useState<PlantDetails>({
     images: [],
     description: "",
     wikiLink: "",
   });
-  const [recognized, setRecognized] = useState([]);
+  const [recognized, setRecognized] = useState<string[]>([]);
 
   // do all permission tasks and initial server requests
   useEffect(() => {
@@ -123,16 +123,16 @@ export default function App() {
       // animate bottom sheet to cover whole screen
       bottomSheetRef.current?.snapToIndex(1);
       // call prediction service with image
-      const predictions: any = await getFlowerImagePrediction(image);
-      if (predictions !== null) {
-        setAllPredicted(predictions);
+      const predictPayload = await getFlowerImagePrediction(image);
+      if (predictPayload !== null) {
+        setAllPredicted(predictPayload.predictions);
       } else {
         return Alert.alert(
           "Ops",
           "Looks like something bad happened, please try again!"
         );
       }
-      const details = await getPlantDetails(predictions[0].name)
+      const details = await getPlantDetails(predictPayload.predictions[0].name)
       setDetails(details);
     } catch (err: any) {
       console.log(err.message);

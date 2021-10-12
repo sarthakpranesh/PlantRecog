@@ -49,7 +49,7 @@ app.post("/predict", async (res, req) => {
       .setHeader("Content-type", "application/json")
       .send(
         JSON.stringify({
-          messages: "Success",
+          message: "Success",
           payload: {
             predictions: sortedResp,
           },

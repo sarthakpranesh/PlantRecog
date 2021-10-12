@@ -37,8 +37,7 @@ import {
   isServiceAvailable,
   getRecognizedClasses,
   getFlowerImagePrediction,
-  getSimilarImages,
-  getWiki,
+  getPlantDetails,
 } from "./services/plantRecog";
 
 const { width } = Dimensions.get("screen");
@@ -58,8 +57,11 @@ export default function App() {
       score: 0,
     },
   ]);
-  const [similarImages, setSimilarImages] = useState([]);
-  const [wiki, setWiki] = useState({ description: "", wikiLink: "" });
+  const [details, setDetails] = useState({
+    images: [],
+    description: "",
+    wikiLink: "",
+  });
   const [recognized, setRecognized] = useState([]);
 
   // do all permission tasks and initial server requests
@@ -114,8 +116,11 @@ export default function App() {
           },
         ]),
         setImage(image),
-        setSimilarImages([]),
-        setWiki({ description: "", wikiLink: "" }),
+        setDetails({
+          images: [],
+          description: "",
+          wikiLink: "",
+        })
       ]);
       // animate bottom sheet to cover whole screen
       bottomSheetRef.current?.snapToIndex(1);
@@ -129,12 +134,9 @@ export default function App() {
           "Looks like something bad happened, please try again!"
         );
       }
-      const [images, wiki] = await Promise.all([
-        getSimilarImages(predictions[0].name),
-        getWiki(predictions[0].name),
-      ]);
-      setSimilarImages(images);
-      setWiki(wiki);
+      const details = await getPlantDetails(predictions[0].name)
+      console.log(details);
+      setDetails(details);
     } catch (err: any) {
       console.log(err.message);
     }
@@ -144,7 +146,7 @@ export default function App() {
     return (
       <>
         <H3 text="Plant Images" />
-        {similarImages.length === 0 ? (
+        {details.images.length === 0 ? (
           <Paragraph text="Loading..." />
         ) : (
           <BottomSheetFlatList
@@ -155,7 +157,7 @@ export default function App() {
             }}
             horizontal
             showsHorizontalScrollIndicator={false}
-            data={similarImages}
+            data={details.images}
             keyExtractor={(_, i) => `${i}`}
             renderItem={({ item }) => {
               return (
@@ -181,15 +183,15 @@ export default function App() {
     return (
       <>
         <H3 text="Description" />
-        {wiki.description.length === 0 ? (
+        {details.description.length === 0 ? (
           <Paragraph text="Loading..." />
         ) : (
           <>
-            <Paragraph text={wiki.description} />
+            <Paragraph text={details.description} />
             <TouchableOpacity
               onPress={() => {
-                if (wiki.wikiLink !== "") {
-                  Linking.openURL(wiki.wikiLink);
+                if (details.wikiLink !== "") {
+                  Linking.openURL(details.wikiLink);
                 }
               }}
             >

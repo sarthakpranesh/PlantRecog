@@ -31,25 +31,11 @@ const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
 
 // isServiceAvailable calls the server to make sure
 // if the server's are running and are available
+// also returns all the recognized classes for the latest model
 export const isServiceAvailable = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      await FetchBuilder("", undefined);
-      resolve(true);
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-// getRecognizedClasses calls the "/all" route on
-// server to fetch all the recognized classes for
-// a specific version, if no version specified
-// then fetched for the latest version available
-export const getRecognizedClasses = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const resp: any = await FetchBuilder("details", undefined);
+      const resp: any = await FetchBuilder("", undefined);
       resolve(resp.payload);
     } catch (err) {
       reject(err);

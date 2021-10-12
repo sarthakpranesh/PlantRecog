@@ -1,0 +1,3 @@
+Final Train Accuracy: 0.9281
+Final Validation Accuracy: 0.7109
+Summary: Good train accuracy, model still not converged, give more epochs for v0.3.0

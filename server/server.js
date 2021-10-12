@@ -1,3 +1,4 @@
+require("@tensorflow/tfjs-backend-webgl");
 const tf = require("@tensorflow/tfjs-node");
 const cors = require("cors");
 const express = require("express");

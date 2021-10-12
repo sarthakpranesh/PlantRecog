@@ -86,27 +86,13 @@ export const getFlowerImagePrediction = (photoUri: string) => {
   });
 };
 
-// getSimilarImages calls the "/images/:name"
+// getPlantDetails calls the "/details/:name"
 // route on the server where name is the class
-// of the plant
-export const getSimilarImages = (name: string) => {
+// of the plant to get plant details
+export const getPlantDetails = (name: string) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp: any = await FetchBuilder(`images/${name}`, undefined);
-      resolve(resp.payload.images);
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-// getWiki calls the "/wiki/:name"
-// route on the server where name is the class
-// to retrieve the wikipedia description of the plant
-export const getWiki = (name: string) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const resp: any = await FetchBuilder(`wiki/${name}`, undefined);
+      const resp: any = await FetchBuilder(`details/${name}`, undefined);
       resolve(resp.payload);
     } catch (err) {
       reject(err);

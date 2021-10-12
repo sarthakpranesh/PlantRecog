@@ -1,13 +1,17 @@
 const app = require("express")();
 
 // index route for server availability check
-app.get("/", (res, _) => {
+app.get("/", (res, req) => {
+  const classes = Object.keys(req.req.mlModel.classes);
   return res.res
     .status(200)
     .setHeader("Content-type", "application/json")
     .send(
       JSON.stringify({
-        message: "Server Up and Fine",
+        message: "Success",
+        payload: {
+          recognized: classes,
+        },
       })
     );
 });

@@ -35,7 +35,6 @@ import { H1, H2, H3, Paragraph } from "./components/Typography";
 import { floatToPercentage } from "./services/math";
 import {
   isServiceAvailable,
-  getRecognizedClasses,
   getFlowerImagePrediction,
   getPlantDetails,
 } from "./services/plantRecog";
@@ -68,12 +67,11 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await SplashScreen.preventAutoHideAsync();
-      const [isPlantServiceUp, cameraPer, pickerPer, recogPayload] =
+      const [isPlantServiceUp, cameraPer, pickerPer] =
         await Promise.all([
           isServiceAvailable(),
           Camera.requestPermissionsAsync(),
-          ImagePicker.requestMediaLibraryPermissionsAsync(),
-          getRecognizedClasses(),
+          ImagePicker.requestMediaLibraryPermissionsAsync()
         ]);
       if (!isPlantServiceUp) {
         Alert.alert(
@@ -85,7 +83,7 @@ export default function App() {
       setHasPermissionCamera(cameraPer.status === "granted");
       setHasPermissionPicker(pickerPer.status === "granted");
       setAppIsReady(true);
-      setRecognized(recogPayload.recognized);
+      setRecognized(isPlantServiceUp.recognized);
       await analytics().logEvent("app_open", {
         time: Date.now(),
       });
@@ -135,7 +133,6 @@ export default function App() {
         );
       }
       const details = await getPlantDetails(predictions[0].name)
-      console.log(details);
       setDetails(details);
     } catch (err: any) {
       console.log(err.message);

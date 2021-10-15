@@ -1,3 +1,0 @@
-Final Train Accuracy: 0.868
-Final Validation Accuracy: 0.7754
-Summary: Good train accuracy, model converged, v0.3.0 trained on googleImage20

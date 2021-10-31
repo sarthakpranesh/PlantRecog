@@ -23,7 +23,7 @@ app.post("/predict", async (res, req) => {
     // preprocessing image and do prediction
     const decodedImage = tf.node.decodeImage(image.data);
     const resizeImg = tf.image
-      .resizeNearestNeighbor(decodedImage, (size = [112, 112])) // original is [224, 224]
+      .resizeNearestNeighbor(decodedImage, (size = [224, 224])) // original is [224, 224]
       .toFloat();
     const offset = tf.scalar(127.5); // default value is 127.5
     const inputImage = resizeImg.sub(offset).div(offset).expandDims();

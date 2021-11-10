@@ -8,16 +8,14 @@
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
-  "author": "",
+  "author": "Sarthak Pranesh (sarthakpranesh08@gmail.com)",
   "license": "ISC",
   "dependencies": {
     "@tensorflow/tfjs-node": "^3.8.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
-    "express-rate-limit": "^5.3.0",
-    "node-cache": "^5.1.2",
-    "puppeteer": "^10.2.0"
+    "express-rate-limit": "^5.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

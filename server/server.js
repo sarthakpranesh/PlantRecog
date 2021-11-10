@@ -53,7 +53,6 @@ app.use("/", require("./routes/v1/index"));
 
 // start server and load models
 app.listen(process.env.PORT || 8080, async () => {
-  console.log("Server started!");
   console.log("Loading ML model");
   try {
     const modelVers = fs.readdirSync("./tfjs-models/");

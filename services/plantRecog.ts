@@ -32,21 +32,24 @@ const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
 // isServiceAvailable calls the server to make sure
 // if the server's are running and are available
 // also returns all the recognized classes for the latest model
-export const isServiceAvailable: () => Promise<ServiceAvailablePayload> = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const resp: any = await FetchBuilder("", undefined);
-      resolve(resp.payload);
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
+export const isServiceAvailable: () => Promise<ServiceAvailablePayload> =
+  () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const resp: any = await FetchBuilder("", undefined);
+        resolve(resp.payload);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  };
 
 // getFlowerImagePrediction calls the "/predict"
 // route on the server and fetches the top five
 // predictions made by ML/DL model
-export const getFlowerImagePrediction: (photoUri: string) => Promise<PredictPayload> = (photoUri) => {
+export const getFlowerImagePrediction: (
+  photoUri: string
+) => Promise<PredictPayload> = (photoUri) => {
   return new Promise(async (resolve, reject) => {
     try {
       // create the file object
@@ -65,20 +68,6 @@ export const getFlowerImagePrediction: (photoUri: string) => Promise<PredictPayl
         method: "POST",
         body,
       });
-      resolve(resp.payload);
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-// getPlantDetails calls the "/details/:name"
-// route on the server where name is the class
-// of the plant to get plant details
-export const getPlantDetails: (name: string) => Promise<DetailsPayload> = (name) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const resp: any = await FetchBuilder(`details/${name}`, undefined);
       resolve(resp.payload);
     } catch (err) {
       reject(err);

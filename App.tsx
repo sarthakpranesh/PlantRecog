@@ -32,11 +32,11 @@ import CusCamera from "./components/Camera";
 import { Github } from "./components/Icons";
 import { H1, H2, H3, Paragraph } from "./components/Typography";
 // importing services
+import { getPlantDetails } from "./services/gyan";
 import { floatToPercentage } from "./services/math";
 import {
   isServiceAvailable,
   getFlowerImagePrediction,
-  getPlantDetails,
 } from "./services/plantRecog";
 
 const { width } = Dimensions.get("screen");
@@ -59,7 +59,7 @@ export default function App() {
   const [details, setDetails] = useState<PlantDetails>({
     images: [],
     description: "",
-    wikiLink: "",
+    link: "",
   });
   const [recognized, setRecognized] = useState<string[]>([]);
 
@@ -67,12 +67,11 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await SplashScreen.preventAutoHideAsync();
-      const [isPlantServiceUp, cameraPer, pickerPer] =
-        await Promise.all([
-          isServiceAvailable(),
-          Camera.requestPermissionsAsync(),
-          ImagePicker.requestMediaLibraryPermissionsAsync()
-        ]);
+      const [isPlantServiceUp, cameraPer, pickerPer] = await Promise.all([
+        isServiceAvailable(),
+        Camera.requestPermissionsAsync(),
+        ImagePicker.requestMediaLibraryPermissionsAsync(),
+      ]);
       if (!isPlantServiceUp) {
         Alert.alert(
           "Oh! Snap",
@@ -117,8 +116,8 @@ export default function App() {
         setDetails({
           images: [],
           description: "",
-          wikiLink: "",
-        })
+          link: "",
+        }),
       ]);
       // animate bottom sheet to cover whole screen
       bottomSheetRef.current?.snapToIndex(1);
@@ -132,7 +131,7 @@ export default function App() {
           "Looks like something bad happened, please try again!"
         );
       }
-      const details = await getPlantDetails(predictPayload.predictions[0].name)
+      const details = await getPlantDetails(predictPayload.predictions[0].name);
       setDetails(details);
     } catch (err: any) {
       console.log(err.message);
@@ -187,8 +186,8 @@ export default function App() {
             <Paragraph text={details.description} />
             <TouchableOpacity
               onPress={() => {
-                if (details.wikiLink !== "") {
-                  Linking.openURL(details.wikiLink);
+                if (details.link !== "") {
+                  Linking.openURL(details.link);
                 }
               }}
             >
@@ -261,7 +260,7 @@ export default function App() {
             style={styles.github}
             onPress={async () => {
               await analytics().logEvent("github_open");
-              Linking.openURL("https://github.com/sarthakpranesh/PlantRecog")
+              Linking.openURL("https://github.com/sarthakpranesh/PlantRecog");
             }}
           >
             <Github />

@@ -60,6 +60,7 @@ export default function App() {
     images: [],
     description: "",
     link: "",
+    loaded: false,
   });
   const [recognized, setRecognized] = useState<string[]>([]);
 
@@ -117,6 +118,7 @@ export default function App() {
           images: [],
           description: "",
           link: "",
+          loaded: false,
         }),
       ]);
       // animate bottom sheet to cover whole screen
@@ -132,6 +134,7 @@ export default function App() {
         );
       }
       const details = await getPlantDetails(predictPayload.predictions[0].name);
+      details.loaded = true;
       setDetails(details);
     } catch (err: any) {
       console.log(err.message);
@@ -179,23 +182,31 @@ export default function App() {
     return (
       <>
         <H3 text="Description" />
-        {details.description.length === 0 ? (
+        {!details.loaded ? (
           <Paragraph text="Loading..." />
         ) : (
           <>
-            <Paragraph text={details.description} />
-            <TouchableOpacity
-              onPress={() => {
-                if (details.link !== "") {
-                  Linking.openURL(details.link);
-                }
-              }}
-            >
-              <H3
-                style={{ color: "blue", marginTop: 0 }}
-                text="Open in Wikipedia"
-              />
-            </TouchableOpacity>
+            <Paragraph
+              text={
+                details.description.length === 0
+                  ? "Can't find Wiki details"
+                  : details.description
+              }
+            />
+            {details.description.length === 0 ? null : (
+              <TouchableOpacity
+                onPress={() => {
+                  if (details.link !== "") {
+                    Linking.openURL(details.link);
+                  }
+                }}
+              >
+                <H3
+                  style={{ color: "blue", marginTop: 0 }}
+                  text="Open in Wikipedia"
+                />
+              </TouchableOpacity>
+            )}
           </>
         )}
       </>
@@ -254,7 +265,7 @@ export default function App() {
           <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
           <H2 text="About" />
           <Paragraph
-            text={`PlantRecog is an Open Source project, it allows you to know plants with just a click. How we do it? We run our Tensorflow based image classification model as an API service using Nodejs. All the components (service + app + research) used in the project are available on Github and we can currently recognize ${recognized.length} plants from there flowers. Show your support by leaving a 🌟 on our Github Repo (click icon below)`}
+            text={`PlantRecog is an Open Source project, which allows you to know plants with just a click. All the components (service + app + research) used in the project are available on Github. The app can currently recognize ${recognized.length} plants from there flowers.`}
           />
           <TouchableOpacity
             style={styles.github}

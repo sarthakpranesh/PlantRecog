@@ -13,7 +13,7 @@ const Paragraph = ({ text, style }: ParagraphParams) => {
       style={[
         {
           fontSize: RFValue(14),
-          fontWeight: "800",
+          fontWeight: "900",
           color: "#373D3F",
           textAlign: "justify",
         },

@@ -9,6 +9,7 @@ declare type PlantDetails = {
   images: string[];
   description: string;
   link: string;
+  loaded: boolean;
 };
 
 // API PAYLOADS

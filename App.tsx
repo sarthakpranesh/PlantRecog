@@ -68,11 +68,18 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await SplashScreen.preventAutoHideAsync();
-      const [isPlantServiceUp, cameraPer, pickerPer] = await Promise.all([
-        isServiceAvailable(),
+      const [cameraPer, pickerPer] = await Promise.all([
         Camera.requestPermissionsAsync(),
         ImagePicker.requestMediaLibraryPermissionsAsync(),
       ]);
+      setHasPermissionCamera(cameraPer.status === "granted");
+      setHasPermissionPicker(pickerPer.status === "granted");
+      setAppIsReady(true);
+      await analytics().logEvent("app_open", {
+        time: Date.now(),
+      });
+      // Calling the service last to make sure it's not blocking app startup due to Heroku server sleep
+      const isPlantServiceUp = await isServiceAvailable();
       if (!isPlantServiceUp) {
         Alert.alert(
           "Oh! Snap",
@@ -80,13 +87,7 @@ export default function App() {
           [{ text: "Close App", onPress: () => BackHandler.exitApp() }]
         );
       }
-      setHasPermissionCamera(cameraPer.status === "granted");
-      setHasPermissionPicker(pickerPer.status === "granted");
-      setAppIsReady(true);
       setRecognized(isPlantServiceUp.recognized);
-      await analytics().logEvent("app_open", {
-        time: Date.now(),
-      });
     })();
   }, []);
 

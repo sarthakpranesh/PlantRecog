@@ -35,7 +35,7 @@ export const getPlantDetails: (name: string) => Promise<DetailsPayload> = (
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const resp: any = await FetchBuilder(`${name}`, undefined);
+      const resp: any = await FetchBuilder(`${name} plant`, undefined);
       resolve(resp);
     } catch (err) {
       reject(err);

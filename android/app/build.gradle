@@ -136,8 +136,8 @@ android {
         applicationId "com.plantrecog"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "1.1.0"
+        versionCode 14
+        versionName "1.2.0"
         ndkVersion '21.3.6528147'
     }
     splits {

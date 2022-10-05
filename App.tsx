@@ -4,11 +4,7 @@ import BottomSheet, {
   BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
 import analytics from "@react-native-firebase/analytics";
-import { Camera } from "expo-camera";
-import * as ImagePicker from "expo-image-picker";
-import * as Linking from "expo-linking";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
+import { RNCamera } from "react-native-camera";
 import React, {
   useState,
   useEffect,
@@ -25,6 +21,7 @@ import {
   BackHandler,
   Image,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 
 // importing components
@@ -46,9 +43,6 @@ export default function App() {
   const snapPoints = useMemo(() => ["48%", "100%"], []);
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const [hasPermissionCamera, setHasPermissionCamera] = useState(false);
-  const [hasPermissionPicker, setHasPermissionPicker] = useState(false);
-
   const [image, setImage] = useState<string | null>(null);
   const [allPredicted, setAllPredicted] = useState<Predictions>([
     {
@@ -67,13 +61,13 @@ export default function App() {
   // do all permission tasks and initial server requests
   useEffect(() => {
     (async () => {
-      await SplashScreen.preventAutoHideAsync();
-      const [cameraPer, pickerPer] = await Promise.all([
-        Camera.requestPermissionsAsync(),
-        ImagePicker.requestMediaLibraryPermissionsAsync(),
-      ]);
-      setHasPermissionCamera(cameraPer.status === "granted");
-      setHasPermissionPicker(pickerPer.status === "granted");
+      // await SplashScreen.preventAutoHideAsync();
+      // const [cameraPer, pickerPer] = await Promise.all([
+      //   // Camera.requestCameraPermission(),
+      //   // ImagePicker.requestMediaLibraryPermissionsAsync(),
+      // ]);
+      // setHasPermissionCamera(cameraPer === "authorized");
+      // setHasPermissionPicker(pickerPer.status === 'granted');
       setAppIsReady(true);
       await analytics().logEvent("app_open", {
         time: Date.now(),
@@ -94,7 +88,7 @@ export default function App() {
   // to avoid flicker remove the splash, when actual app renders after appIsReady changes to "true"
   const onLayout = useCallback(async () => {
     if (appIsReady) {
-      await SplashScreen.hideAsync();
+      // await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
 
@@ -239,12 +233,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container} onLayout={onLayout}>
-      <StatusBar hidden />
-      <CusCamera
-        hasPermissionCamera={hasPermissionCamera}
-        hasPermissionPicker={hasPermissionPicker}
-        recognizeImage={recognizeImage}
-      />
+      <CusCamera recognizeImage={recognizeImage} />
       <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
         <BottomSheetScrollView
           contentContainerStyle={styles.scrollViewContainer}

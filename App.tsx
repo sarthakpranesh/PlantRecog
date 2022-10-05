@@ -4,14 +4,7 @@ import BottomSheet, {
   BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
 import analytics from "@react-native-firebase/analytics";
-import { RNCamera } from "react-native-camera";
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   StyleSheet,
   View,

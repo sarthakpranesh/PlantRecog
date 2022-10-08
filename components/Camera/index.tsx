@@ -1,6 +1,5 @@
 import analytics from "@react-native-firebase/analytics";
-import { RNCamera } from "react-native-camera";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import {
   TouchableOpacity,
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   View,
   ToastAndroid,
 } from "react-native";
+import { RNCamera } from "react-native-camera";
 
 // importing components
 import { Camera as CameraIcon, Folder } from "../Icons";
@@ -19,7 +19,7 @@ export type CameraProps = {
 };
 
 const Camera = ({ recognizeImage }: CameraProps) => {
-  const camera = useRef<VisionCamera>(null);
+  const camera = useRef<RNCamera>(null);
 
   const takePictureAsync = async () => {
     analytics().logEvent("click_image");
@@ -59,10 +59,10 @@ const Camera = ({ recognizeImage }: CameraProps) => {
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.auto}
         androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
+          title: "Permission to use camera",
+          message: "We need your permission to use your camera",
+          buttonPositive: "Ok",
+          buttonNegative: "Cancel",
         }}
       />
       <TouchableOpacity

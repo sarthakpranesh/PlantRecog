@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   Linking,
   StatusBar,
+  PermissionsAndroid,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -56,12 +57,15 @@ export default function App() {
   useEffect(() => {
     (async () => {
       // await SplashScreen.preventAutoHideAsync();
-      // const [cameraPer, pickerPer] = await Promise.all([
-      //   RNCamera..requestCameraPermission(),
-      //   ImagePicker.requestMediaLibraryPermissionsAsync(),
-      // ]);
-      // setHasPermissionCamera(cameraPer === "authorized");
-      // setHasPermissionPicker(pickerPer.status === 'granted');
+      const [cameraPer] = await Promise.all([
+        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+          title: "Permission to use camera",
+          message: "We need your permission to use your camera",
+          buttonPositive: "Ok",
+          buttonNegative: "Cancel",
+          buttonNeutral: "Ask Me Later",
+        }),
+      ]);
       setAppIsReady(true);
       await analytics().logEvent("app_open", {
         time: Date.now(),

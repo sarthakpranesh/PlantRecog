@@ -8,6 +8,10 @@ import {
   ToastAndroid,
 } from "react-native";
 import { RNCamera } from "react-native-camera";
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from "react-native-image-picker";
 
 // importing components
 import { Camera as CameraIcon, Folder } from "../Icons";
@@ -39,16 +43,18 @@ const Camera = ({ recognizeImage }: CameraProps) => {
 
   const pickImage = async () => {
     analytics().logEvent("pick_image");
-    // const result = await ImagePicker.launchImageLibraryAsync({
-    //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //   allowsEditing: true,
-    //   aspect: [1, 1],
-    //   quality: 1,
-    // });
 
-    // if (!result.cancelled) {
-    //   recognizeImage(result.uri);
-    // }
+    const options: ImageLibraryOptions = {
+      mediaType: "photo",
+      quality: 1,
+      maxHeight: 500,
+      maxWidth: 500,
+    };
+    const result = await launchImageLibrary(options);
+
+    if (!result.didCancel) {
+      recognizeImage(result.assets[0].uri);
+    }
   };
 
   return (
@@ -58,6 +64,7 @@ const Camera = ({ recognizeImage }: CameraProps) => {
         style={StyleSheet.absoluteFill}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.auto}
+        captureAudio={false}
         androidCameraPermissionOptions={{
           title: "Permission to use camera",
           message: "We need your permission to use your camera",

@@ -37,7 +37,7 @@ export const getPlantDetails: (name: string) => Promise<DetailsPayload> = (
     try {
       const resp: any = await FetchBuilder(`${name} plant`, undefined);
       if (resp.description.length === 0) {
-        analytics().logEvent(`gyan-api-wiki-missing-${name}`, {
+        analytics().logEvent(`gyanAPIWikiMiss`, {
           name,
           apiResponse: resp,
         });

@@ -6,7 +6,7 @@ const fileUpload = require("express-fileupload");
 const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 
-app = express();
+const app = express();
 
 // global holder variables for ML model
 const models = {};

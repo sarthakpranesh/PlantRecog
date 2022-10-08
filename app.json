@@ -1,10 +1,4 @@
 {
-  "expo": {
-    "name": "PlantRecog",
-    "slug": "PlantRecog",
-    "version": "1.2.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
-  }
+  "name": "PlantRecog",
+  "displayName": "PlantRecog"
 }

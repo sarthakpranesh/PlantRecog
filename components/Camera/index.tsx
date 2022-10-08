@@ -1,56 +1,77 @@
 import analytics from "@react-native-firebase/analytics";
-import { Camera as ExpoCamera } from "expo-camera";
-import * as ImagePicker from "expo-image-picker";
-import React from "react";
-import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { useRef } from "react";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  View,
+  ToastAndroid,
+} from "react-native";
+import { RNCamera } from "react-native-camera";
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from "react-native-image-picker";
 
 // importing components
 import { Camera as CameraIcon, Folder } from "../Icons";
 
 const { width, height } = Dimensions.get("window");
-let camera: ExpoCamera;
 
 export type CameraProps = {
-  hasPermissionCamera: boolean;
-  hasPermissionPicker: boolean;
   recognizeImage: (image: string) => void;
 };
 
-const Camera = ({
-  hasPermissionCamera,
-  hasPermissionPicker,
-  recognizeImage,
-}: CameraProps) => {
+const Camera = ({ recognizeImage }: CameraProps) => {
+  const camera = useRef<RNCamera>(null);
+
   const takePictureAsync = async () => {
     analytics().logEvent("click_image");
-    const photo = await camera.takePictureAsync({
+    const photo = await camera.current?.takePictureAsync({
       quality: 1,
     });
-
+    if (photo === undefined) {
+      analytics().logEvent("errorTakingPhoto", { photo });
+      return ToastAndroid.showWithGravity(
+        "Unable to capture image!",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    }
     recognizeImage(photo.uri);
   };
 
   const pickImage = async () => {
     analytics().logEvent("pick_image");
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
 
-    if (!result.cancelled) {
-      recognizeImage(result.uri);
+    const options: ImageLibraryOptions = {
+      mediaType: "photo",
+      quality: 1,
+      maxHeight: 500,
+      maxWidth: 500,
+    };
+    const result = await launchImageLibrary(options);
+
+    if (!result.didCancel) {
+      recognizeImage(result.assets[0].uri);
     }
   };
 
   return (
-    <ExpoCamera
-      style={styles.camera}
-      type={ExpoCamera.Constants.Type.back}
-      ref={(r) => (camera = r)}
-      ratio="1:1"
-    >
+    <View style={styles.camera}>
+      <RNCamera
+        ref={camera}
+        style={StyleSheet.absoluteFill}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.auto}
+        captureAudio={false}
+        androidCameraPermissionOptions={{
+          title: "Permission to use camera",
+          message: "We need your permission to use your camera",
+          buttonPositive: "Ok",
+          buttonNegative: "Cancel",
+        }}
+      />
       <TouchableOpacity
         style={styles.mainCameraButton}
         onPress={takePictureAsync}
@@ -60,7 +81,7 @@ const Camera = ({
       <TouchableOpacity style={styles.mainGalleryButton} onPress={pickImage}>
         <Folder />
       </TouchableOpacity>
-    </ExpoCamera>
+    </View>
   );
 };
 
@@ -79,7 +100,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 20,
-    backgroundColor: `rgba(249, 249, 249, 0.8)`,
+    backgroundColor: "rgba(249, 249, 249, 0.8)",
     position: "absolute",
     bottom: 90,
     display: "flex",
@@ -97,7 +118,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 20,
-    backgroundColor: `rgba(249, 249, 249, 0.8)`,
+    backgroundColor: "rgba(249, 249, 249, 0.8)",
     position: "absolute",
     bottom: 90,
     right: 10,

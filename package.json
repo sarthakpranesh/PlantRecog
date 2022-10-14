@@ -17,7 +17,7 @@
     "deprecated-react-native-prop-types": "^2.3.0",
     "patch-package": "^6.4.7",
     "react": "18.1.0",
-    "react-native": "0.70.2",
+    "react-native": "0.70.3",
     "react-native-camera": "^4.2.1",
     "react-native-gesture-handler": "^2.7.0",
     "react-native-image-picker": "^4.10.0",

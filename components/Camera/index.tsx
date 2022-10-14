@@ -11,6 +11,7 @@ import { RNCamera } from "react-native-camera";
 import {
   ImageLibraryOptions,
   launchImageLibrary,
+  PhotoQuality,
 } from "react-native-image-picker";
 
 // importing components
@@ -22,13 +23,21 @@ export type CameraProps = {
   recognizeImage: (image: string) => void;
 };
 
+// helper data
+const imageDimensions = {
+  width: 500,
+  height: 500,
+  quality: 0.7,
+};
+
 const Camera = ({ recognizeImage }: CameraProps) => {
   const camera = useRef<RNCamera>(null);
 
   const takePictureAsync = async () => {
     analytics().logEvent("click_image");
     const photo = await camera.current?.takePictureAsync({
-      quality: 1,
+      quality: imageDimensions.quality,
+      width: imageDimensions.width,
     });
     if (photo === undefined) {
       analytics().logEvent("errorTakingPhoto", { photo });
@@ -46,9 +55,9 @@ const Camera = ({ recognizeImage }: CameraProps) => {
 
     const options: ImageLibraryOptions = {
       mediaType: "photo",
-      quality: 1,
-      maxHeight: 500,
-      maxWidth: 500,
+      quality: imageDimensions.quality as PhotoQuality,
+      maxHeight: imageDimensions.height,
+      maxWidth: imageDimensions.width,
     };
     const result = await launchImageLibrary(options);
 

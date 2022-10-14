@@ -19,7 +19,7 @@ const H2 = ({ text, style }: H2Params) => {
       style={[
         {
           fontSize: RFValue(18),
-          fontWeight: "bold",
+          fontWeight: "normal",
           color: "#373D3F",
           marginTop: 10,
         },

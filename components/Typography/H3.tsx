@@ -17,7 +17,7 @@ const H3 = ({ text, style }: H3Params) => {
       style={[
         {
           fontSize: RFValue(12),
-          fontWeight: "bold",
+          fontWeight: "800",
           color: "#373D3F",
           marginTop: 8,
         },

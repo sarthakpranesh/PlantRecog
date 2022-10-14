@@ -17,6 +17,7 @@ import {
   StatusBar,
   PermissionsAndroid,
 } from "react-native";
+import RNBootSplash from "react-native-bootsplash";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // importing components
@@ -57,7 +58,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       // await SplashScreen.preventAutoHideAsync();
-      const [cameraPer] = await Promise.all([
+      await Promise.all([
         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
           title: "Permission to use camera",
           message: "We need your permission to use your camera",
@@ -86,7 +87,7 @@ export default function App() {
   // to avoid flicker remove the splash, when actual app renders after appIsReady changes to "true"
   const onLayout = useCallback(async () => {
     if (appIsReady) {
-      // await SplashScreen.hideAsync();
+      RNBootSplash.hide({ fade: true });
     }
   }, [appIsReady]);
 

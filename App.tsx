@@ -57,7 +57,6 @@ export default function App() {
   // do all permission tasks and initial server requests
   useEffect(() => {
     (async () => {
-      // await SplashScreen.preventAutoHideAsync();
       await Promise.all([
         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
           title: "Permission to use camera",
@@ -83,18 +82,6 @@ export default function App() {
       setRecognized(isPlantServiceUp.recognized);
     })();
   }, []);
-
-  // to avoid flicker remove the splash, when actual app renders after appIsReady changes to "true"
-  const onLayout = useCallback(async () => {
-    if (appIsReady) {
-      RNBootSplash.hide({ fade: true });
-    }
-  }, [appIsReady]);
-
-  // if app is not ready then render nothing
-  if (!appIsReady) {
-    return null;
-  }
 
   const recognizeImage = async (image: string) => {
     try {
@@ -128,8 +115,10 @@ export default function App() {
         );
       }
       const details = await getPlantDetails(predictPayload.predictions[0].name);
-      details.loaded = true;
-      setDetails(details);
+      setDetails({
+        ...details,
+        loaded: true,
+      });
     } catch (err: any) {
       console.log(err.message);
     }
@@ -183,11 +172,11 @@ export default function App() {
             <Paragraph
               text={
                 details.description.length === 0
-                  ? "Can't find Wiki details"
+                  ? "Not able to extra description from Wikipedia!"
                   : details.description
               }
             />
-            {details.description.length === 0 ? null : (
+            {details.link.length === 0 ? null : (
               <TouchableOpacity
                 onPress={() => {
                   if (details.link !== "") {
@@ -229,6 +218,18 @@ export default function App() {
       </>
     );
   };
+
+  // to avoid flicker remove the splash, when actual app renders after appIsReady changes to "true"
+  const onLayout = useCallback(async () => {
+    if (appIsReady) {
+      RNBootSplash.hide({ fade: true });
+    }
+  }, [appIsReady]);
+
+  // if app is not ready then render nothing
+  if (!appIsReady) {
+    return null;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

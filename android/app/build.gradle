@@ -130,6 +130,13 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+/**
+ * Hiding my playstore/release keystore details
+ */
+def keystorePropertiesFile= rootProject.file("keystore.properties")  
+def keystoreProperties = new Properties()  
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile)) 
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -221,11 +228,11 @@ android {
             keyPassword 'android'
         }
         release {
-            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
-                storePassword MYAPP_UPLOAD_STORE_PASSWORD
-                keyAlias MYAPP_UPLOAD_KEY_ALIAS
-                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            if (keystoreProperties['MYAPP_UPLOAD_STORE_FILE']) {
+                storeFile file(keystoreProperties['MYAPP_UPLOAD_STORE_FILE'])
+                storePassword keystoreProperties['MYAPP_UPLOAD_STORE_PASSWORD']
+                keyAlias keystoreProperties['MYAPP_UPLOAD_KEY_ALIAS']
+                keyPassword keystoreProperties['MYAPP_UPLOAD_KEY_PASSWORD']
             }
         }
     }

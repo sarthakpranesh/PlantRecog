@@ -1,7 +1,4 @@
-import BottomSheet, {
-  BottomSheetScrollView,
-  BottomSheetFlatList,
-} from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import analytics from "@react-native-firebase/analytics";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -18,7 +15,7 @@ import {
   PermissionsAndroid,
 } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { GestureHandlerRootView, FlatList } from "react-native-gesture-handler";
 
 // importing components
 import CusCamera from "./components/Camera";
@@ -131,7 +128,7 @@ export default function App() {
         {details.images.length === 0 ? (
           <Paragraph text="Loading..." />
         ) : (
-          <BottomSheetFlatList
+          <FlatList
             style={{
               borderRadius: 8,
               backgroundColor: "#F9F9F9",
@@ -172,7 +169,7 @@ export default function App() {
             <Paragraph
               text={
                 details.description.length === 0
-                  ? "Not able to extra description from Wikipedia!"
+                  ? "Unable to extract details from Wikipedia!"
                   : details.description
               }
             />

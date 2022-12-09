@@ -3,7 +3,7 @@
 <br />
 
 ### WARNING
-The application in the current state is non functional as Heroku shutdown all their free services. I haven't yet found time to host the service elsewhere and update the code base.
+Not all services used by this app are running. Heroku has phased out there free tier and Gyan API, one of my side projects was hosted on it which is no longer up and running. You'll find code in the app commented with `GyanIsDead` tag, in future if I host the service some place else then I'll add it back to the project.
 
 <br />
 

@@ -1,5 +1,6 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import analytics from "@react-native-firebase/analytics";
+import remoteConfig from "@react-native-firebase/remote-config";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   StyleSheet,
@@ -55,6 +56,9 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await Promise.all([
+        remoteConfig().setDefaults({
+          server: "[]",
+        }),
         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
           title: "Permission to use camera",
           message: "We need your permission to use your camera",
@@ -63,6 +67,7 @@ export default function App() {
           buttonNeutral: "Ask Me Later",
         }),
       ]);
+      await remoteConfig().fetchAndActivate();
       setAppIsReady(true);
       await analytics().logEvent("app_open", {
         time: Date.now(),
@@ -111,9 +116,16 @@ export default function App() {
           "Looks like something bad happened, please try again!"
         );
       }
-      const details = await getPlantDetails(predictPayload.predictions[0].name);
+      // GyanIsDead
+      // const details = await getPlantDetails(predictPayload.predictions[0].name);
+      // setDetails({
+      //   ...details,
+      //   loaded: true,
+      // });
       setDetails({
-        ...details,
+        images: [],
+        description: "",
+        link: "",
         loaded: true,
       });
     } catch (err: any) {
@@ -121,77 +133,82 @@ export default function App() {
     }
   };
 
-  const renderImages = () => {
-    return (
-      <>
-        <H3 text="Plant Images" />
-        {details.images.length === 0 ? (
-          <Paragraph text="Loading..." />
-        ) : (
-          <FlatList
-            style={{
-              borderRadius: 8,
-              backgroundColor: "#F9F9F9",
-              marginBottom: 10,
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={details.images}
-            keyExtractor={(_, i) => `${i}`}
-            renderItem={({ item }) => {
-              return (
-                <Image
-                  style={{
-                    width: 100,
-                    height: 160,
-                    resizeMode: "cover",
-                    margin: 4,
-                    borderRadius: 8,
-                  }}
-                  source={{ uri: item }}
-                />
-              );
-            }}
-          />
-        )}
-      </>
-    );
-  };
+  // GyanIsDead
+  // const renderImages = () => {
+  //   return (
+  //     <>
+  //       <H3 text="Plant Images" />
+  //       {!details.loaded ? (
+  //         <Paragraph text="Loading..." />
+  //       ) : (
+  //         <FlatList
+  //           style={{
+  //             borderRadius: 8,
+  //             backgroundColor: "#F9F9F9",
+  //             marginBottom: 10,
+  //           }}
+  //           horizontal
+  //           showsHorizontalScrollIndicator={false}
+  //           data={details.images}
+  //           keyExtractor={(_, i) => `${i}`}
+  //           renderItem={({ item }) => {
+  //             return (
+  //               <Image
+  //                 style={{
+  //                   width: 100,
+  //                   height: 160,
+  //                   resizeMode: "cover",
+  //                   margin: 4,
+  //                   borderRadius: 8,
+  //                 }}
+  //                 source={{ uri: item }}
+  //               />
+  //             );
+  //           }}
+  //           ListEmptyComponent={
+  //             <Paragraph text="Unable to extract images from net!" />
+  //           }
+  //         />
+  //       )}
+  //     </>
+  //   );
+  // };
 
-  const renderWiki = () => {
-    return (
-      <>
-        <H3 text="Description" />
-        {!details.loaded ? (
-          <Paragraph text="Loading..." />
-        ) : (
-          <>
-            <Paragraph
-              text={
-                details.description.length === 0
-                  ? "Unable to extract details from Wikipedia!"
-                  : details.description
-              }
-            />
-            {details.link.length === 0 ? null : (
-              <TouchableOpacity
-                onPress={() => {
-                  if (details.link !== "") {
-                    Linking.openURL(details.link);
-                  }
-                }}
-              >
-                <H3
-                  style={{ color: "blue", marginTop: 0 }}
-                  text="Open in Wikipedia"
-                />
-              </TouchableOpacity>
-            )}
-          </>
-        )}
-      </>
-    );
-  };
+  // GyanIsDead
+  // const renderWiki = () => {
+  //   return (
+  //     <>
+  //       <H3 text="Description" />
+  //       {!details.loaded ? (
+  //         <Paragraph text="Loading..." />
+  //       ) : (
+  //         <>
+  //           <Paragraph
+  //             text={
+  //               details.description.length === 0
+  //                 ? "Unable to extract details from Wikipedia!"
+  //                 : details.description
+  //             }
+  //           />
+  //           {details.link.length === 0 ? null : (
+  //             <TouchableOpacity
+  //               onPress={() => {
+  //                 if (details.link !== "") {
+  //                   Linking.openURL(details.link);
+  //                 }
+  //               }}
+  //             >
+  //               <H3
+  //                 style={{ color: "blue", marginTop: 0 }}
+  //                 text="Open in Wikipedia"
+  //               />
+  //             </TouchableOpacity>
+  //           )}
+  //         </>
+  //       )}
+  //     </>
+  //   );
+  // };
 
   const renderOtherPrediction = () => {
     if (allPredicted.length <= 1) {
@@ -245,8 +262,9 @@ export default function App() {
                 <Paragraph
                   text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`}
                 />
-                {renderImages()}
-                {renderWiki()}
+                {/* GyanIsDead */}
+                {/* {renderImages()}
+                {renderWiki()} */}
                 {renderOtherPrediction()}
               </View>
             )}

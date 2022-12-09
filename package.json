@@ -13,6 +13,7 @@
     "@gorhom/bottom-sheet": "^4",
     "@react-native-firebase/analytics": "^15.4.0",
     "@react-native-firebase/app": "^15.4.0",
+    "@react-native-firebase/remote-config": "^16.4.6",
     "cross-fetch": "^3.1.5",
     "deprecated-react-native-prop-types": "^2.3.0",
     "patch-package": "^6.4.7",

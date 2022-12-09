@@ -19,7 +19,7 @@ const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
       resolve(resp);
     } catch (err: any) {
       console.log(`Service->Gyan->${route} error:`, err.message);
-      await analytics().logEvent("gyan-api-error", {
+      await analytics().logEvent("gyan_api_error", {
         message: err.message,
       });
       reject(err);

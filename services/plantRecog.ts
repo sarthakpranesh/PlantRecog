@@ -9,7 +9,7 @@ import fetch from "cross-fetch";
  *   to aid the applications.
  */
 
-const baseUrl = "https://plantrecog.herokuapp.com/v1/";
+const baseUrl = "https://plantrecog.up.railway.app/";
 
 // Global request builder to be used in all requests
 const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
@@ -21,7 +21,7 @@ const FetchBuilder = (route: string, conf: RequestInit | undefined) => {
       resolve(resp);
     } catch (err: any) {
       console.log(`Service->PlantRecog->${route} error:`, err.message);
-      await analytics().logEvent("plantrecog-api-error", {
+      await analytics().logEvent("plantrecog_api_error", {
         message: err.message,
       });
       reject(err);

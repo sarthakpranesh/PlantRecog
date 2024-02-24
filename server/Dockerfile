@@ -48,6 +48,7 @@ ENV NODE_ENV production
 COPY . .
 
 RUN yarn
+RUN npm rebuild @tensorflow/tfjs-node --build-from-source
 
 # COPY --from=builder /usr/local/nvm /usr/local/nvm
 # COPY --from=builder /app /app
@@ -55,4 +56,4 @@ RUN yarn
 # WORKDIR /app
 ENV NODE_ENV production
 
-# CMD [ "yarn", "run", "start" ]
+CMD [ "yarn", "run", "start" ]

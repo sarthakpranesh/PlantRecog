@@ -55,4 +55,4 @@ RUN yarn
 # WORKDIR /app
 ENV NODE_ENV production
 
-CMD [ "yarn", "run", "start" ]
+# CMD [ "yarn", "run", "start" ]

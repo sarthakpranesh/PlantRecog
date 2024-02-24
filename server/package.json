@@ -11,7 +11,7 @@
   "author": "Sarthak Pranesh (sarthakpranesh08@gmail.com)",
   "license": "ISC",
   "dependencies": {
-    "@tensorflow/tfjs-node": "^3.8.0",
+    "@tensorflow/tfjs-node": "3.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",

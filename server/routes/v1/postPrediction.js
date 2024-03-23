@@ -43,6 +43,15 @@ app.post("/predict", async (res, req) => {
         score: respPre[v],
       }));
 
+    // If gyan is configured then fetch gyan data as well
+    let gyanData = null
+    try {
+      const mainPredict = sortedResp[0].name
+      gyanData = fetch(`http://127.0.0.1:9090/${mainPredict}`)
+    } catch (err) {
+      console.log(err)
+    }
+
     // send the top 5 predictions back to client
     return res.res
       .status(200)
@@ -52,6 +61,7 @@ app.post("/predict", async (res, req) => {
           message: "Success",
           payload: {
             predictions: sortedResp,
+            gyanData,
           },
         })
       );

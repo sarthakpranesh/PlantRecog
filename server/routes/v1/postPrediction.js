@@ -45,11 +45,14 @@ app.post("/predict", async (res, req) => {
 
     // If gyan is configured then fetch gyan data as well
     let gyanData = null
-    try {
-      const mainPredict = sortedResp[0].name
-      gyanData = fetch(`http://127.0.0.1:9090/${mainPredict}`)
-    } catch (err) {
-      console.log(err)
+    if (process.env.GYAN) {
+      try {
+        const mainPredict = sortedResp[0].name
+        const response = await fetch(`${process.env.GYAN}/${mainPredict}`)
+        gyanData = await response.json()
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     // send the top 5 predictions back to client

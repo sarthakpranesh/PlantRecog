@@ -1,4 +1,6 @@
 require("@tensorflow/tfjs-backend-webgl");
+require('dotenv').config()
+
 const tf = require("@tensorflow/tfjs-node");
 const cors = require("cors");
 const express = require("express");

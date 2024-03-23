@@ -1,5 +1,6 @@
 const tf = require("@tensorflow/tfjs-node");
 const app = require("express")();
+const fetch = require("node-fetch");
 
 // predict the class of an image
 app.post("/predict", async (res, req) => {

@@ -23,7 +23,6 @@ import CusCamera from "./components/Camera";
 import { Github } from "./components/Icons";
 import { H1, H2, H3, Paragraph } from "./components/Typography";
 // importing services
-import { getPlantDetails } from "./services/gyan";
 import { floatToPercentage } from "./services/math";
 import {
   isServiceAvailable,
@@ -110,105 +109,95 @@ export default function App() {
       const predictPayload = await getFlowerImagePrediction(image);
       if (predictPayload !== null) {
         setAllPredicted(predictPayload.predictions);
+        setDetails({
+          ...predictPayload.gyanData,
+          loaded: true,
+        });
       } else {
         return Alert.alert(
           "Ops",
           "Looks like something bad happened, please try again!"
         );
       }
-      // GyanIsDead
-      // const details = await getPlantDetails(predictPayload.predictions[0].name);
-      // setDetails({
-      //   ...details,
-      //   loaded: true,
-      // });
-      setDetails({
-        images: [],
-        description: "",
-        link: "",
-        loaded: true,
-      });
     } catch (err: any) {
       console.log(err.message);
     }
   };
 
-  // GyanIsDead
-  // const renderImages = () => {
-  //   return (
-  //     <>
-  //       <H3 text="Plant Images" />
-  //       {!details.loaded ? (
-  //         <Paragraph text="Loading..." />
-  //       ) : (
-  //         <FlatList
-  //           style={{
-  //             borderRadius: 8,
-  //             backgroundColor: "#F9F9F9",
-  //             marginBottom: 10,
-  //           }}
-  //           horizontal
-  //           showsHorizontalScrollIndicator={false}
-  //           data={details.images}
-  //           keyExtractor={(_, i) => `${i}`}
-  //           renderItem={({ item }) => {
-  //             return (
-  //               <Image
-  //                 style={{
-  //                   width: 100,
-  //                   height: 160,
-  //                   resizeMode: "cover",
-  //                   margin: 4,
-  //                   borderRadius: 8,
-  //                 }}
-  //                 source={{ uri: item }}
-  //               />
-  //             );
-  //           }}
-  //           ListEmptyComponent={
-  //             <Paragraph text="Unable to extract images from net!" />
-  //           }
-  //         />
-  //       )}
-  //     </>
-  //   );
-  // };
+  const renderImages = () => {
+    return (
+      <>
+        <H3 text="Plant Images" />
+        {!details.loaded ? (
+          <Paragraph text="Loading..." />
+        ) : (
+          <FlatList
+            style={{
+              borderRadius: 8,
+              backgroundColor: "#F9F9F9",
+              marginBottom: 10,
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={details.images}
+            keyExtractor={(_, i) => `${i}`}
+            renderItem={({ item }) => {
+              return (
+                <Image
+                  style={{
+                    width: 100,
+                    height: 160,
+                    resizeMode: "cover",
+                    margin: 4,
+                    borderRadius: 8,
+                  }}
+                  source={{ uri: item }}
+                />
+              );
+            }}
+            ListEmptyComponent={
+              <Paragraph text="Unable to extract images from net!" />
+            }
+          />
+        )}
+      </>
+    );
+  };
 
-  // GyanIsDead
-  // const renderWiki = () => {
-  //   return (
-  //     <>
-  //       <H3 text="Description" />
-  //       {!details.loaded ? (
-  //         <Paragraph text="Loading..." />
-  //       ) : (
-  //         <>
-  //           <Paragraph
-  //             text={
-  //               details.description.length === 0
-  //                 ? "Unable to extract details from Wikipedia!"
-  //                 : details.description
-  //             }
-  //           />
-  //           {details.link.length === 0 ? null : (
-  //             <TouchableOpacity
-  //               onPress={() => {
-  //                 if (details.link !== "") {
-  //                   Linking.openURL(details.link);
-  //                 }
-  //               }}
-  //             >
-  //               <H3
-  //                 style={{ color: "blue", marginTop: 0 }}
-  //                 text="Open in Wikipedia"
-  //               />
-  //             </TouchableOpacity>
-  //           )}
-  //         </>
-  //       )}
-  //     </>
-  //   );
-  // };
+  const renderWiki = () => {
+    return (
+      <>
+        <H3 text="Description" />
+        {!details.loaded ? (
+          <Paragraph text="Loading..." />
+        ) : (
+          <>
+            <Paragraph
+              text={
+                details.description.length === 0
+                  ? "Unable to extract details from Wikipedia!"
+                  : details.description
+              }
+            />
+            {details.link.length === 0 ? null : (
+              <TouchableOpacity
+                onPress={() => {
+                  if (details.link !== "") {
+                    Linking.openURL(details.link);
+                  }
+                }}
+              >
+                <H3
+                  style={{ color: "blue", marginTop: 0 }}
+                  text="Open in Wikipedia"
+                />
+              </TouchableOpacity>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
 
   const renderOtherPrediction = () => {
     if (allPredicted.length <= 1) {
@@ -262,9 +251,8 @@ export default function App() {
                 <Paragraph
                   text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`}
                 />
-                {/* GyanIsDead */}
-                {/* {renderImages()}
-                {renderWiki()} */}
+                {renderImages()}
+                {renderWiki()}
                 {renderOtherPrediction()}
               </View>
             )}

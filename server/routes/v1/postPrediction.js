@@ -45,14 +45,16 @@ app.post("/predict", async (res, req) => {
       }));
 
     // If gyan is configured then fetch gyan data as well
-    let gyanData = null
+    let gyanData = null;
     if (process.env.GYAN) {
       try {
-        const mainPredict = sortedResp[0].name
-        const response = await fetch(`${process.env.GYAN}/${mainPredict}`)
-        gyanData = await response.json()
+        const mainPredict = sortedResp[0].name;
+        const response = await fetch(
+          `${process.env.GYAN}/${mainPredict} plant`
+        );
+        gyanData = await response.json();
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     }
 

@@ -110,6 +110,9 @@ export default function App() {
       if (predictPayload !== null) {
         setAllPredicted(predictPayload.predictions);
         setDetails({
+          images: [],
+          description: "",
+          link: "",
           ...predictPayload.gyanData,
           loaded: true,
         });
@@ -174,12 +177,12 @@ export default function App() {
           <>
             <Paragraph
               text={
-                details.description.length === 0
+                details?.description && details?.description?.length === 0
                   ? "Unable to extract details from Wikipedia!"
                   : details.description
               }
             />
-            {details.link.length === 0 ? null : (
+            {details?.link && details?.link?.length !== 0 && (
               <TouchableOpacity
                 onPress={() => {
                   if (details.link !== "") {
@@ -200,7 +203,7 @@ export default function App() {
   };
 
   const renderOtherPrediction = () => {
-    if (allPredicted.length <= 1) {
+    if (allPredicted || allPredicted?.length <= 1) {
       return null;
     }
     return (
@@ -260,7 +263,7 @@ export default function App() {
             <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
             <H2 text="About" />
             <Paragraph
-              text={`PlantRecog is an Open Source project, which allows you to know plants with just a click. All the components (service + app + research) used in the project are available on Github. The app can currently recognize ${recognized.length} plants from there flowers.`}
+              text={`PlantRecog is an Open Source project, which allows you to know plants with just a click. All the components (service + app + research) used in the project are available on Github. The app can currently recognize ${recognized?.length} plants from there flowers.`}
             />
             <TouchableOpacity
               style={styles.github}

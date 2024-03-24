@@ -1,1 +1,1 @@
-docker build -t sarthakpranesh/plantrecog --progress=plain .
+docker build -t sarthakpranesh/plantrecog .

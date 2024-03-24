@@ -18,5 +18,6 @@ declare type ServiceAvailablePayload = {
 };
 declare type PredictPayload = {
   predictions: Predictions;
+  gyanData: PlantDetails;
 };
 declare type DetailsPayload = PlantDetails;

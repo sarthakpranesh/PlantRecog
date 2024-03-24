@@ -2,11 +2,6 @@
 
 <br />
 
-### WARNING
-Not all services used by this app are running. Heroku has phased out there free tier and Gyan API, one of my side projects was hosted on it which is no longer up and running. You'll find code in the app commented with `GyanIsDead` tag, in future if I host the service some place else then I'll add it back to the project.
-
-<br />
-
 PlantRecog aims to become or lead to the goto "Free Plant Recognition" solution. Why? As of today, 30th August 2021, there aren't many online free services or apps available to solve this problem. The existing solutions are mostly paid and have high subscription amounts per year. I want to create a fairly basic but usable set of services (app + api + models) for people who want to develop tools that recognize plants.
 
 The current version of the project is able to recognize 299 plants using their flowers. This flower recognition model and API developed under this project are available freely in the repository. They can be self hosted by anyone who wants to use these services for building their own apps.

@@ -50,7 +50,7 @@ app.post("/predict", async (res, req) => {
       try {
         const mainPredict = sortedResp[0].name;
         const response = await fetch(
-          `${process.env.GYAN}/${mainPredict} plant`
+          `${process.env.GYAN}/${mainPredict}`
         );
         gyanData = await response.json();
       } catch (err) {

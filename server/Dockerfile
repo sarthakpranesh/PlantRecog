@@ -47,13 +47,8 @@ ENV NODE_ENV production
 
 COPY . .
 
+RUN rm -rf ./yarn.lock
 RUN yarn
 RUN npm rebuild @tensorflow/tfjs-node --build-from-source
-
-# COPY --from=builder /usr/local/nvm /usr/local/nvm
-# COPY --from=builder /app /app
-
-# WORKDIR /app
-ENV NODE_ENV production
 
 CMD [ "yarn", "run", "start" ]

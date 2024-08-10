@@ -51,4 +51,6 @@ RUN rm -rf ./yarn.lock
 RUN yarn
 RUN npm rebuild @tensorflow/tfjs-node --build-from-source
 
+EXPOSE 8080
+
 CMD [ "yarn", "run", "start" ]

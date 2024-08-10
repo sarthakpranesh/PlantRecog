@@ -12,7 +12,7 @@ import fetch from "cross-fetch";
 
 const server = {
   default: true,
-  base: "https://perfect-naturally-monarch.ngrok-free.app/",
+  base: "https://perfect-naturally-monarch.ngrok-free.app/plantrecog/",
 };
 
 // Base selector

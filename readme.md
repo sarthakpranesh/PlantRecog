@@ -26,8 +26,12 @@ This is the documentation for the server API that is used in PlantRecog. This se
 | `get "/details"` | `{"message":"Success","payload":{"recognized":["Abutilon","Acacia",...,"Zenobia","Zinnia"]}}` | Get all the recognized classes for the latest model available on the server |
 | `post "/predict" content-type="multipart/form-data" parameter="image"` | `{"messages":"Success","payload":{"predictions":[{"name":"MorningGlory","score":0.38581109046936035},{"name":"Acacia","score":0.14158271253108978},{"name":"MoonflowerVine","score":0.12431787699460983},{"name":"LilyoftheValley","score":0.06644751876592636},{"name":"FrangipaniFlower","score":0.062477629631757736}]}}` | Post plant image using `multipart/form-data`, parameter name should be `image` and the route will provide the top 5 prediction for the plant image |
 
-### Other services used
-Gyan API - https://github.com/sarthakpranesh/Gyan
+### Services used
+These are self hosted by me, you can use them in personal projects if you like, but for anything production
+ready please consider self hosting.
+
+PlantRecog API - https://plantrecog.sarthak.work
+Gyan API - https://gyan.sarthak.work
 
 <br />
 

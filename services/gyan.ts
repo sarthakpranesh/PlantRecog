@@ -6,7 +6,7 @@ import fetch from "cross-fetch";
  *   recognized plant
  */
 
-const baseUrl = "https://gyanall.herokuapp.com/";
+const baseUrl = "https://gyan.sarthak.work/";
 
 // Global request builder to be used in all requests
 const FetchBuilder = (route: string, conf: RequestInit | undefined) => {

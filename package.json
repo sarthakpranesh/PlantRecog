@@ -25,6 +25,7 @@
     "react-native-camera": "^4.2.1",
     "react-native-gesture-handler": "^2.6.0",
     "react-native-image-picker": "^4.10.0",
+    "react-native-performance-stats": "^0.2.3",
     "react-native-reanimated": "^2.10.0",
     "react-native-responsive-fontsize": "^0.5.1",
     "react-native-svg": "^12.3.0"
@@ -63,5 +64,6 @@
         "svg"
       ]
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

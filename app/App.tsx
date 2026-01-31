@@ -11,11 +11,11 @@ import {
   Image,
   TouchableOpacity,
   Linking,
-  StatusBar,
   PermissionsAndroid,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { GestureHandlerRootView, FlatList } from "react-native-gesture-handler";
+import { SystemBars } from 'react-native-edge-to-edge'
 
 // importing components
 import CusCamera from "./components/Camera";
@@ -33,7 +33,7 @@ const { width } = Dimensions.get("screen");
 
 export default function App() {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["48%", "100%"], []);
+  const snapPoints = useMemo(() => ["44%", "100%"], []);
 
   const [appIsReady, setAppIsReady] = useState(false);
   const [image, setImage] = useState<string | null>(null);
@@ -240,44 +240,50 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container} onLayout={onLayout}>
-        <StatusBar hidden />
-        <CusCamera recognizeImage={recognizeImage} />
-        <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
-          <BottomSheetScrollView
-            contentContainerStyle={styles.scrollViewContainer}
-            showsVerticalScrollIndicator={false}
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container} onLayout={onLayout} edges={['top', 'bottom']} mode="margin">
+          <SystemBars style="dark" />
+          <CusCamera recognizeImage={recognizeImage} />
+          <BottomSheet 
+            ref={bottomSheetRef}
+            index={0}
+            snapPoints={snapPoints}
           >
-            {image === null ? null : (
-              <View>
-                <Image style={styles.plantImage} source={{ uri: image }} />
-                <H1 text={allPredicted[0].name} />
-                <Paragraph
-                  text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`}
-                />
-                {renderImages()}
-                {renderWiki()}
-                {renderOtherPrediction()}
-              </View>
-            )}
-            <H2 text="Get Started" />
-            <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
-            <H2 text="About" />
-            <Paragraph
-              text={`PlantRecog is an Open Source project, which allows you to know plants with just a click. All the components (service + app + research) used in the project are available on Github. The app can currently recognize ${recognized?.length} plants from there flowers.`}
-            />
-            <TouchableOpacity
-              style={styles.github}
-              onPress={async () => {
-                await analytics().logEvent("github_open");
-                Linking.openURL("https://github.com/sarthakpranesh/PlantRecog");
-              }}
+            <BottomSheetScrollView
+              contentContainerStyle={styles.scrollViewContainer}
+              showsVerticalScrollIndicator={false}
             >
-              <Github />
-            </TouchableOpacity>
-          </BottomSheetScrollView>
-        </BottomSheet>
-      </SafeAreaView>
+              {image === null ? null : (
+                <View>
+                  <Image style={styles.plantImage} source={{ uri: image }} />
+                  <H1 text={allPredicted[0].name} />
+                  <Paragraph
+                    text={`Accuracy: ${floatToPercentage(allPredicted[0].score)}`}
+                  />
+                  {renderImages()}
+                  {renderWiki()}
+                  {renderOtherPrediction()}
+                </View>
+              )}
+              <H2 text="Get Started" />
+              <Paragraph text="Try taking a photo of your favorite flower, and see what they're called, or Do you already have a flower photo? Open the image gallery to select it." />
+              <H2 text="About" />
+              <Paragraph
+                text={`PlantRecog is an Open Source project, which allows you to know plants with just a click. All the components (service + app + research) used in the project are available on Github. The app can currently recognize ${recognized?.length} plants from there flowers.`}
+              />
+              <TouchableOpacity
+                style={styles.github}
+                onPress={async () => {
+                  await analytics().logEvent("github_open");
+                  Linking.openURL("https://github.com/sarthakpranesh/PlantRecog");
+                }}
+              >
+                <Github />
+              </TouchableOpacity>
+            </BottomSheetScrollView>
+          </BottomSheet>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

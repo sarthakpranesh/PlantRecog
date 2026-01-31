@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+
+        <item name="android:windowSplashScreenBackground">#ffffff</item>
+
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash</item>
+
+        <item name="android:windowSplashScreenBehavior">icon_preferred</item>
+
+    </style>
+
+</resources>

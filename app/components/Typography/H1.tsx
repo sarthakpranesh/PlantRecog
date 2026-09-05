@@ -1,11 +1,15 @@
-import * as React from "react";
-import { Text } from "react-native";
-import { RFValue } from "react-native-responsive-fontsize";
+import * as React from 'react';
+import {Text} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+
+import {colors} from '../../theme';
 
 export const H1TextFormatter = (text: string) => {
-  const firstLetter = text.split("")[0].toUpperCase();
-  const formatted = firstLetter + text.slice(1, text.length);
-  return formatted;
+  if (!text) {
+    return '';
+  }
+  const spaced = text.replace(/([a-z])([A-Z])/g, '$1 $2');
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };
 
 export type H1Params = {
@@ -13,15 +17,16 @@ export type H1Params = {
   style?: any;
 };
 
-const H1 = ({ text, style }: H1Params) => {
+const H1 = ({text, style}: H1Params) => {
   return (
     <Text
       style={[
         {
-          fontSize: RFValue(32),
-          fontWeight: "bold",
-          color: "#373D3F",
-          marginTop: 12,
+          fontSize: RFValue(28),
+          fontWeight: '700',
+          color: colors.forest,
+          letterSpacing: -0.6,
+          lineHeight: RFValue(34),
         },
         style,
       ]}

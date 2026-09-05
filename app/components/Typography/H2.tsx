@@ -1,11 +1,14 @@
-import * as React from "react";
-import { Text } from "react-native";
-import { RFValue } from "react-native-responsive-fontsize";
+import * as React from 'react';
+import {Text} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+
+import {colors} from '../../theme';
 
 export const H2TextFormatter = (text: string) => {
-  const firstLetter = text.split("")[0].toUpperCase();
-  const formatted = firstLetter + text.slice(1, text.length);
-  return formatted;
+  if (!text) {
+    return '';
+  }
+  return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
 export type H2Params = {
@@ -13,15 +16,15 @@ export type H2Params = {
   style?: any;
 };
 
-const H2 = ({ text, style }: H2Params) => {
+const H2 = ({text, style}: H2Params) => {
   return (
     <Text
       style={[
         {
-          fontSize: RFValue(18),
-          fontWeight: "normal",
-          color: "#373D3F",
-          marginTop: 10,
+          fontSize: RFValue(17),
+          fontWeight: '700',
+          color: colors.forest,
+          letterSpacing: -0.2,
         },
         style,
       ]}

@@ -1,18 +1,18 @@
 import * as React from 'react';
 import Svg, {SvgProps, Path} from 'react-native-svg';
 
-const Camera = ({color = '#000', ...props}: SvgProps) => {
+const Leaf = ({color = '#1F5C3D', ...props}: SvgProps) => {
   return (
-    <Svg width={24} height={20} viewBox="0 0 24 20" fill="none" {...props}>
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" {...props}>
       <Path
-        d="M23 17a2 2 0 01-2 2H3a2 2 0 01-2-2V6a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z"
+        d="M5 19c8-1 13-7 14-15-8 1-14 7-14 15z"
         stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <Path
-        d="M12 15a4 4 0 100-8 4 4 0 000 8z"
+        d="M5 19c3-6 8-10 14-12"
         stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
@@ -22,4 +22,4 @@ const Camera = ({color = '#000', ...props}: SvgProps) => {
   );
 };
 
-export default Camera;
+export default Leaf;

@@ -26,5 +26,5 @@ export const radius = {
   pill: 999,
 };
 
-export const SHEET_COLLAPSED = '42%';
-export const SHEET_EXPANDED = '94%';
+export const SHEET_COLLAPSED = '50%';
+export const SHEET_EXPANDED = '100%';
